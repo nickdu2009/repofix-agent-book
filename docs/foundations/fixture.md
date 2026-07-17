@@ -1,4 +1,23 @@
-# 第一个缺陷练习仓库
+# 第 03 章 · 第一个缺陷练习仓库
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读缺陷骨架 | `examples/repofix/labs/chapter-03/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-03/` |
+| 最小修复参考 | `examples/repofix/labs/chapter-03/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-03
+python .work/chapter-03/exercise.py
+make chapter-check CHAPTER=chapter-03
+```
+
+在 `.work/chapter-03/exercise.py` 中先运行并观察失败，再完成最小修复；不要直接修改 start。`chapter-check` 验证 TODO 与完成标记，不替代你对程序输出的判断。`solution/` 只在验收后用于比较。
 
 ## 本章目标
 
@@ -55,7 +74,7 @@ make fixture-baseline
 
 ```text
 1 failed, 1 passed
-PASS: buggy-calculator fails before repair, as expected
+PASS: buggy-calculator has exactly one failure and one pass before repair
 ```
 
 这个 Make target 把“预期存在一个失败”当作成功验收，因此最终退出码是 `0`。如果两个测试都通过，它反而失败，因为那说明 Fixture 不再是书中定义的起始状态。
@@ -157,7 +176,7 @@ cd fixtures/buggy-calculator
 
 | 症状 | 原因 | 处理 |
 | --- | --- | --- |
-| `make fixture-baseline` 报“unexpectedly passed” | 当前分支已经修复，或起始 Checkpoint 错误 | 检查 `git status` 和当前分支；从已有 start tag 或新的干净工作分支重新开始 |
+| `make fixture-baseline` 报“unexpectedly passed” | 当前学习分支已经修复 Fixture | 先保存学习提交，再从未修改 Fixture 的 `main` 创建新练习分支并重跑基线 |
 | `No module named calculator` | 从错误目录直接导入 | 使用本章给出的 `cd fixtures/buggy-calculator` 命令 |
 | 修复后仍返回 `2` | 仍使用 `//`，或改错文件 | 查看 `git diff` 和 Python 实际导入路径 |
 | 测试通过但 Git Diff 包含测试修改 | 验收证据被污染 | 恢复测试，只修改实现后重新运行 |
@@ -171,4 +190,4 @@ cd fixtures/buggy-calculator
 
 ## Checkpoint
 
-把人工修复保存为学习提交，并记录测试输出。后续 Agent 章节不要沿用已经修好的工作树；若该章 start tag 已发布，就从它创建新分支，否则从未修改 Fixture 的干净工作分支开始，让 Agent 面对可验证的原始缺陷。
+把人工修复保存为学习提交，并记录测试输出。后续 Agent 章节不要沿用已经修好的分支；从仍保留原始缺陷的 `main` 创建新练习分支，并先用 `make fixture-baseline` 证明 Agent 面对的是可验证起点。章节 Lab 始终可通过 `chapter-prepare` 从只读骨架重新生成，不依赖 tag。

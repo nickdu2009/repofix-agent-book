@@ -1,4 +1,22 @@
-# 仓库与云端开发工作区
+# 第 02 章 · 仓库与云端开发工作区
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读工作区骨架 | `examples/repofix/labs/chapter-02/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-02/` |
+| 可对照的参考配置 | `examples/repofix/labs/chapter-02/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-02
+make chapter-check CHAPTER=chapter-02
+```
+
+`chapter-prepare` 会拒绝覆盖已有 `.work/chapter-02/`。在该工作副本中完成版本和工作区 TODO；只有自己的检查结果可解释后，再查看只读 `solution/`。后文的完整伴随项目只是参考实现，不替代本章操作。
 
 ## 本章目标
 
@@ -52,9 +70,7 @@ Python、Go 和 Node.js 使用表中的主版本基线；TypeScript、pytest、R
 
 ## 2. 推荐方式：GitHub Codespaces
 
-使用预配置入口创建 Codespace：
-
-[在 Codespaces 中打开 RepoFix](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+使用本章“快速开始”中的通用入口创建 Codespace。
 
 在创建页面确认：
 
@@ -124,17 +140,7 @@ RepoFix bootstrap complete. Run: make test
 make test
 ```
 
-当前 Checkpoint 会运行 Python Agent/HTTP 服务、Go Fake 控制平面、Web 契约层、Eval 原型和共享契约。关键输出应包含：
-
-```text
-31 passed
-Test Files  4 passed (4)
-Tests  12 passed (12)
-4 passed
-validated 4 contract schemas and positive/negative examples
-```
-
-Go 的具体 `ok` 行数可能随测试拆分变化。整个默认测试不能出现 OpenAI 或 Daytona 请求；故意损坏的教学 Fixture 不属于默认测试目标。
+当前 Checkpoint 会运行 Python Agent/HTTP 服务、Go Fake 控制面、Web 契约层、Eval 原型和共享契约。不要把测试数量当成稳定接口：验收看退出码与各分组结果均通过，且没有 OpenAI 或 Daytona 请求。故意损坏的教学 Fixture 不属于默认测试目标。
 
 ## 5. 统一命令约定
 
@@ -180,7 +186,7 @@ Language Focus:  Python / Go / TypeScript / Architecture / Evaluation
 Milestone:       Bootstrap / Agent MVP / Sandbox / Control / Eval / Web / Release
 ```
 
-第一个 Issue 使用[章节实践模板](../preface/chapter-workflow.md#github-issue-template)，Done when 至少包含：
+第一个 Issue 参考[怎样完成一章](../preface/chapter-workflow.md)中的 GitHub 学习追踪方式，Done when 至少包含：
 
 ```text
 make bootstrap

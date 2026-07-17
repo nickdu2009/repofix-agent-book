@@ -1,6 +1,22 @@
-# 运行时架构决策
+# 第 07 章 · 运行时架构决策
 
 本章先固定组件所有权，再编写 Daytona、Python 服务和 Go 控制平面。否则取消、重试和清理会同时由两个服务负责。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-07/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-07` |
+| 工作副本 | `.work/chapter-07/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-07` |
+| 复盘参考 | `examples/repofix/labs/chapter-07/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-07/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+!!! warning "设计蓝图：尚无完整实现"
+    当前仓库只发布所有权 ADR 和后续章节使用的边界约束；Daytona Adapter、持久化与完整 HTTP 控制平面仍未实现。
 
 ## 本章契约
 

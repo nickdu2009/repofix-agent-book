@@ -11,6 +11,7 @@ This repository contains the Chinese RepoFix AI Agent practice book and its MkDo
 - `mkdocs build --strict`
 - `make -C examples/repofix bootstrap`
 - `make -C examples/repofix test`
+- `make -C examples/repofix chapter-lab-test`
 
 ## Editing rules
 
@@ -21,6 +22,7 @@ This repository contains the Chinese RepoFix AI Agent practice book and its MkDo
 - Never suggest running model-generated commands on the development host.
 - Before Daytona integration, use only FakeModel and FakeExecutor for agent-loop tests.
 - Keep shared Run, Event, Error, and Artifact values aligned with `examples/repofix/contracts/`.
+- Keep every chapter id aligned across `chapters.json`, docs, `labs/`, and Make targets.
 - Keep navigation in `mkdocs.yml` aligned with files under `docs/`.
 
 ## Done means

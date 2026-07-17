@@ -37,8 +37,14 @@ jobs:
       - name: Run deterministic Eval tests
         run: make eval-unit
 
+      - name: Validate chapter labs and safe workspace handling
+        run: make chapter-lab-test
+
+      - name: Run Python chapter reference exercises
+        run: make chapter-python-solutions
+
       - name: Lint Python code
-        run: .venv/bin/python -m ruff check fixtures services evals
+        run: .venv/bin/python -m ruff check fixtures services evals scripts labs
 
   go-control:
     runs-on: ubuntu-latest
@@ -63,6 +69,9 @@ jobs:
       - name: Run Fake control-plane E2E
         run: make fake-e2e
 
+      - name: Run Go chapter reference exercises
+        run: make chapter-go-solutions
+
       - name: Check gofmt
         run: |
           unformatted="$(gofmt -l services/control)"
@@ -86,6 +95,12 @@ jobs:
 
       - name: Type-check, test, and build Web
         run: make web-test
+
+      - name: Run TypeScript chapter reference exercises
+        run: make chapter-web-solutions
+
+      - name: Check browser exercise JavaScript
+        run: node --check ../../docs/assets/javascripts/python-runner.js
 
   contracts-and-fixture:
     runs-on: ubuntu-latest

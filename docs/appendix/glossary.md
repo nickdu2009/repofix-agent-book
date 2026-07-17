@@ -21,7 +21,7 @@
 | SSE | 服务器向浏览器单向推送 Run 事件的 HTTP 机制 |
 | Contract | Go、Python 与 TypeScript 服务之间共享的数据约束 |
 | Capability Token | 只允许某个 Run 在有限时间和范围内调用 Tool Gateway 的短期凭据 |
-| Checkpoint | 一个章节开始或完成时可检出的代码版本与验收结果 |
+| Checkpoint | 章节骨架或参考答案的可检出状态；目录使用 `labs/chapter-NN/{start,solution}`，未来 Git tag 使用 `chapter-NN-start` / `chapter-NN-solution` |
 | Fixture | 为练习或评测专门构造、行为固定的缺陷仓库 |
 | Oracle | 独立判断修复是否正确的可信测试或确定性规则 |
 | Tool Schema | 描述工具名称、参数和约束的严格 JSON Schema |

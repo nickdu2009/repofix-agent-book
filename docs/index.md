@@ -1,6 +1,6 @@
 # RepoFix：从后端工程师到 AI Agent 工程实践
 
-这是一份可以从空白工作区一路做到可部署系统的实践教程。你不会只阅读架构图：每个实施章节都有起始 Checkpoint、需要修改的文件、可复制的命令、预期输出、失败路径测试和验收条件。
+这是一份可以从空白工作区一路做到可部署系统的实践教程。正文先解释问题、取舍和失败方式；每章再给一个小型起始骨架、可复制命令、测试与参考实现，代码服务于学习，而不是占据教程主体。
 
 主线项目 **RepoFix** 接收一个 GitHub 仓库和 Issue，并尝试完成：
 
@@ -29,14 +29,15 @@
 
 ## 最快开始
 
-1. 阅读[学习路线](preface/learning-path.md)和[章节实践模板](preface/chapter-workflow.md)。
-2. 按[仓库与云端工作区](foundations/cloud-workspace.md)创建 Codespace。
-3. 在伴随项目中执行：
+1. 阅读[学习路线](preface/learning-path.md)和[怎样完成一章](preface/chapter-workflow.md)。
+2. 按[仓库与云端工作区](foundations/cloud-workspace.md)创建 Codespace，或先在[在线练习](playgrounds/index.md)运行语法小题。
+3. 在伴随项目中准备第一章骨架：
 
    ```bash
    cd examples/repofix
-   make bootstrap
-   make test
+   make chapter-list
+   make chapter-prepare CHAPTER=chapter-01
+   make chapter-check CHAPTER=chapter-01
    ```
 
 4. 完成[第一个缺陷练习仓库](foundations/fixture.md)，理解“初始测试失败”和“修复后测试通过”为什么是两个独立证据。
@@ -53,31 +54,27 @@
 | 评测 | 固定缺陷集、隐藏验证、JSONL 结果和对比报告 |
 | 产品化 | TypeScript 页面、SSE 轨迹、CI 和部署版本 |
 
-完成本书不是“所有页面都读过”，而是从一个全新 Codespace 可以复现项目，并且每个 Checkpoint 的验收命令都通过。
+完成本书不是“所有页面都读过”，而是从一个全新 Codespace 可以复现项目，完成自己的章节工作副本，并用验收命令证明结果。
 
-## Checkpoint 如何使用
+## 骨架与参考实现如何使用
 
-已发布的章节会让书籍和伴随代码一起打 tag：
+每章的文件结构保持一致：
 
 ```text
-chapter-04-start       本章开始状态
-chapter-04-solution    本章参考实现
+labs/chapter-04/start/       带 TODO 的起点
+labs/chapter-04/solution/    用于复盘的参考实现
+.work/chapter-04/            你的工作副本，不提交到仓库
 ```
 
-先列出当前版本真正提供的章节 tag：
+不要直接编辑骨架，先复制到工作区：
 
 ```bash
-git fetch --tags
-git tag --list 'chapter-*'
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-04
+make chapter-check CHAPTER=chapter-04
 ```
 
-只有目标 tag 已存在时，才从起始点创建自己的分支：
-
-```bash
-git switch -c work/chapter-04 chapter-04-start
-```
-
-不要猜测或手工伪造尚未发布的 tag，也不要直接在 detached HEAD 上工作。目标章节尚无 tag 时，在自己的分支上跟随 `main` 中的当前教材，使用该章的基线命令确认起点。`main` 始终保存当前已完成的最新版本；已发布的 tag 保存教材所对应的稳定快照。
+第一次结构检查会按教学设计失败。完成 TODO、把 Lab 状态标成 `complete`、运行该章的行为命令并通过检查后，再对照 `solution/`。未来稳定版本仍会使用 `chapter-04-start` 与 `chapter-04-solution` tag，但 tag 不是开始当前教程的前置条件。
 
 ## 贯穿全书的安全闸门
 
@@ -97,8 +94,8 @@ git switch -c work/chapter-04 chapter-04-start
 ## 入门验收
 
 - [ ] 能说明 `docs/` 与 `examples/repofix/` 的关系。
-- [ ] 能列出已发布的 Checkpoint tag，并在 tag 存在时创建工作分支。
-- [ ] `make bootstrap` 和 `make test` 成功。
+- [ ] 能生成独立章节工作副本，并说明 `start/`、`.work/` 与 `solution/` 的区别。
+- [ ] `make chapter-check CHAPTER=chapter-01` 成功。
 - [ ] 能解释为什么真实模型必须等到 Daytona 后才运行。
 - [ ] 能区分“Agent 声称修复”和“独立测试证明修复”。
 

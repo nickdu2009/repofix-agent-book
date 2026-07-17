@@ -1,6 +1,25 @@
-# 构建可信评测
+# 第 13 章 · 评测体系
 
 一次演示成功不能证明 Agent 可靠。评测必须把“Agent 自己说成功”和“独立验证确实修复”分开。
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读 Eval Runner 骨架 | `examples/repofix/labs/chapter-13/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-13/` |
+| 参考实现 | `examples/repofix/labs/chapter-13/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-13
+python .work/chapter-13/exercise.py
+make chapter-check CHAPTER=chapter-13
+```
+
+在 `.work/chapter-13/exercise.py` 中实现通过率聚合，并覆盖空样本失败，再对照 solution；start 保持只读。`chapter-check` 只检查练习结构与 TODO，Python 输出才是行为证据。独立 Oracle 与作弊失败路径在本章后续通过主项目 `evals/` 实现和测试。
 
 ## 本章契约
 
@@ -9,7 +28,7 @@
 - **费用**：单元测试与契约测试不使用真实模型；Smoke Eval 必须显式启动。
 - **验收**：Agent 即使修改或删除公开测试，也不能骗过最终判定。
 
-!!! info "当前可运行范围"
+!!! info "集成参考的当前范围"
     伴随代码已经提供一个零云端、作者可信的 `python-floor-division` 案例，用两个临时目录演示候选工作区与独立 Oracle，并测试“改公开测试”和“针对公开样例过拟合”。它不是安全沙箱；接真实模型时必须把两个目录替换为独立 Daytona Sandbox。
 
 ## 案例结构
@@ -103,7 +122,7 @@ make eval-fixtures
 RUN_LIVE_EVAL=1 make eval-smoke
 ```
 
-- `eval-unit`：当前运行 3 条确定性 Runner/Oracle 测试，始终在 CI 运行。
+- `eval-unit`：运行确定性 Runner/Oracle 测试，始终在 CI 运行；不要把测试数量写成稳定接口。
 - `eval-fixtures`：当前验证案例初始失败和隐藏 Oracle；扩充案例时继续加入 metadata Schema 检查。
 - `eval-smoke`：目标命令；只有 Daytona Adapter 与 3～5 个真实案例发布后才会加入 Makefile，并且必须手动运行。当前版本不要执行或伪造这个 target。
 

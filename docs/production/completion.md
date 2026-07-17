@@ -1,6 +1,24 @@
-# v1.0 验收与后续方向
+# 第 19 章 · 完成标准与后续方向
 
 “完成”必须由命令、测试和可追溯 Artifact 证明，而不是一张功能清单。
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读 v1.0 验收记录模板 | `examples/repofix/labs/chapter-19/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-19/` |
+| 填写示例 | `examples/repofix/labs/chapter-19/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-19
+make chapter-check CHAPTER=chapter-19
+```
+
+本章不提供一套“假装已上线”的代码。在 `.work/chapter-19/` 中把每项结论链接到真实命令、CI、Artifact 或演练记录；start 只读，solution 只示范证据格式。
 
 ## 本地确定性验收
 
@@ -68,6 +86,14 @@ Smoke 必须生成：Run ID、源码 commit、模型和 Prompt 版本、Sandbox 
 
 在评测证明需要之前，不加入 LangGraph 关键路径、多 Agent、A2A、长期记忆、向量数据库、Kubernetes、IDE 插件和自动合并 PR。
 
+## 练习
+
+1. 从功能清单随机选择三项，为每项补一个机器证据和一个人工解释证据。
+2. 注入一次 Sandbox 删除失败，记录期望终态、事件顺序、告警和后续清理责任人。
+3. 把所有尚未实现的项移到明确的后续列表，证明 v1.0 结论没有依赖占位命令。
+
 ## 最终自测问题
 
 你应能独立解释：为什么模型不能决定最终成功、为什么真实命令不能在 Codespaces 执行、谁拥有 Sandbox、如何防止旧测试结果、事件如何重放，以及评测如何防止修改测试作弊。
+
+最终验收由 chapter-check 和本页证据共同完成；参考 solution 只能示范记录格式，不能替代你自己的 CI、Smoke、Artifact 与演练链接。

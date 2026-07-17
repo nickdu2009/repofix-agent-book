@@ -1,6 +1,22 @@
-# PostgreSQL、故障恢复与 SSE
+# 第 12 章 · PostgreSQL、故障恢复与 SSE
 
 数据库不仅保存最终状态，还要保证状态、事件和恢复决策可以重放。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-12/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-12` |
+| 工作副本 | `.work/chapter-12/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-12` |
+| 复盘参考 | `examples/repofix/labs/chapter-12/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-12/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+!!! warning "设计蓝图：尚无完整实现"
+    当前仓库没有 PostgreSQL migration、Repository Adapter 或 SSE Server；本章参考实现只用于下一 Checkpoint 的设计审查。
 
 ## 本章契约
 
@@ -8,72 +24,28 @@
 - **产物**：迁移、PostgreSQL Repository、Outbox/SSE、lease 故障处理器。
 - **验收**：控制平面重启后保留所有事实；v1 对无法安全续跑的进行中 Run 明确置为失败并清理 Sandbox，不重复模型或工具动作。
 
-!!! warning "设计蓝图"
-    当前 DDL 和协议用于下一 Checkpoint 的实现审查；仓库尚无 PostgreSQL migration、Repository Adapter 或 SSE Server。只有 SQL 能在空库 migration 测试中执行、重放测试通过后，本章才算可运行。
-
 ## 最小表结构
 
 ```sql
-create table tasks (
-  id text primary key,
-  repository_url text not null,
-  issue_text text not null,
-  created_at timestamptz not null default now()
-);
-
 create table runs (
   id text primary key,
-  task_id text not null references tasks(id),
-  retry_of_run_id text references runs(id),
   status text not null check (status in (
     'pending','provisioning','running','succeeded','failed','cancelled','timed_out'
   )),
   version bigint not null default 1,
-  failure_code text,
   worker_id text,
   lease_expires_at timestamptz,
-  cancel_requested_at timestamptz,
-  sandbox_id text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  sandbox_id text
 );
 
 create table run_events (
   id text primary key,
   run_id text not null references runs(id),
-  sequence bigint not null,
-  type text not null check (type in (
-    'run.started','sandbox.created','sandbox.deleted','sandbox.cleanup_failed','step.started',
-    'tool.started','tool.completed','tests.completed','patch.created',
-    'run.succeeded','run.failed','run.cancelled','run.timed_out'
-  )),
-  schema_version integer not null check (schema_version = 1),
+  sequence bigint not null check (sequence > 0),
+  type text not null,
   data jsonb not null,
   occurred_at timestamptz not null default now(),
   unique (run_id, sequence)
-);
-
-create table steps (
-  id text primary key,
-  run_id text not null references runs(id),
-  number integer not null check (number > 0),
-  tool_name text not null,
-  arguments jsonb not null,
-  result jsonb not null,
-  workspace_revision bigint not null,
-  created_at timestamptz not null default now(),
-  unique (run_id, number)
-);
-
-create table artifacts (
-  id text primary key,
-  run_id text not null references runs(id),
-  kind text not null check (kind in ('patch','test_report','log','trace')),
-  content_type text not null,
-  size_bytes bigint not null check (size_bytes >= 0),
-  sha256 char(64) not null,
-  storage_key text not null,
-  created_at timestamptz not null default now()
 );
 
 create index runs_recovery_idx
@@ -81,7 +53,9 @@ create index runs_recovery_idx
   where status in ('provisioning','running');
 ```
 
-这段 `up` migration 可以在空数据库执行；`down` migration 必须按 `artifacts → steps → run_events → runs → tasks` 的逆依赖顺序删除。默认不保存完整源文件、Secret 或无限日志，`arguments` 和 `result` 写入前仍要脱敏与截断。
+这是用于解释约束的关键片段，不是可执行的完整 migration。完整设计还需要：`tasks` 保存仓库与 Issue；`steps` 保存工具参数、结果和 revision；`artifacts` 只保存 patch、测试报告、日志和 trace 的元数据。状态与事件字面量必须来自[共享契约源码](https://github.com/nickdu2009/repofix-agent-book/tree/main/examples/repofix/contracts)，不要在 SQL 中另造一套。
+
+在 `.work/chapter-12/` 中完成 `up` 与 `down` migration；删除顺序必须是 `artifacts → steps → run_events → runs → tasks`。默认不保存完整源文件、Secret 或无限日志，`arguments` 和 `result` 写入前仍要脱敏与截断。完成后用空数据库迁移测试验证，而不是把本页片段直接复制成“参考实现”。
 
 ## 事务边界
 

@@ -1,6 +1,22 @@
-# Daytona 云沙箱
+# 第 11 章 · Daytona 云沙箱
 
 Daytona 是 RepoFix 执行不可信仓库代码的边界。接入本章之前，真实模型只能观察工具协议，不能在 Codespaces 中执行它生成或修改后的代码。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-11/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-11` |
+| 工作副本 | `.work/chapter-11/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-11` |
+| 复盘参考 | `examples/repofix/labs/chapter-11/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-11/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+!!! warning "设计蓝图：尚无完整实现"
+    当前仓库没有 Daytona SDK Adapter、`sandbox-smoke` target 或云端测试；本章参考实现不是可部署的 Sandbox 集成。
 
 ## 本章契约
 
@@ -8,9 +24,6 @@ Daytona 是 RepoFix 执行不可信仓库代码的边界。接入本章之前，
 - **产物**：Go `SandboxManager` 与 `ToolGateway`，以及 Fake Daytona 测试替身。
 - **安全边界**：只有 Go 控制平面持有 `DAYTONA_API_KEY`。
 - **验收**：成功、失败、超时和取消四条路径都会删除 Sandbox。
-
-!!! warning "设计蓝图，尚未发布云端 Adapter"
-    当前仓库只有 Fake Sandbox 合约和下面的锁版实现指南，没有 Daytona SDK 依赖、`sandbox-smoke` target 或云端测试。完成真实 Adapter、锁定 `go.mod` 并通过手动 Smoke 后，才会发布本章 solution tag。
 
 Daytona Go SDK 要求 Go 1.25 或更高版本；本书统一使用 Go 1.26.x。正式接入时把 SDK 精确版本写入 `go.mod`，不要在教材分支上长期使用未锁定的 `@latest`：
 
@@ -22,56 +35,30 @@ go get github.com/daytona/clients/sdk-go@<本章 checkpoint 锁定版本>
 
 ## 最小生命周期
 
-下面代码展示 SDK 边界；正式项目应把它封装在 `internal/sandbox/daytona.go`，不要让 HTTP Handler 直接依赖 SDK：
+先掌握“创建成功后无论主路径如何结束都要清理”这个不变量。下面是教学伪代码，只保留生命周期结构，不绑定尚未锁版的 Daytona SDK 方法名：
 
 ```go
-package sandbox
-
-import (
-	"context"
-	"errors"
-	"fmt"
-	"time"
-
-	"github.com/daytona/clients/sdk-go/pkg/daytona"
-	"github.com/daytona/clients/sdk-go/pkg/options"
-)
-
-func Smoke(ctx context.Context) (err error) {
-	client, err := daytona.NewClient()
-	if err != nil {
-		return fmt.Errorf("create daytona client: %w", err)
-	}
-	defer client.Close(context.WithoutCancel(ctx))
-
-	box, err := client.Create(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create sandbox: %w", err)
-	}
-	defer func() {
-		cleanupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
-		if deleteErr := box.Delete(cleanupCtx); deleteErr != nil {
-			err = errors.Join(err, fmt.Errorf("request sandbox deletion: %w", deleteErr))
-		}
-	}()
-
-	result, err := box.Process.ExecuteCommand(
-		ctx,
-		`python -c 'print("sandbox ready")'`,
-		options.WithExecuteTimeout(120*time.Second),
-	)
-	if err != nil {
-		return fmt.Errorf("execute sandbox smoke: %w", err)
-	}
-	if result.ExitCode != 0 {
-		return fmt.Errorf("sandbox smoke failed: %s", result.Result)
-	}
-	return nil
+func (o *Orchestrator) withSandbox(
+    ctx context.Context,
+    run domain.Run,
+    use func(context.Context, sandbox.Instance) error,
+) (err error) {
+    box, err := o.sandboxes.Create(ctx, run)
+    if err != nil {
+        return fmt.Errorf("create sandbox: %w", err)
+    }
+    defer func() {
+        cleanupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+        defer cancel()
+        if deleteErr := o.sandboxes.Delete(cleanupCtx, box.ID); deleteErr != nil {
+            err = errors.Join(err, fmt.Errorf("delete sandbox: %w", deleteErr))
+        }
+    }()
+    return use(ctx, box)
 }
 ```
 
-这个 Smoke 只验证创建、执行和发出删除请求；它不假装仓库已经出现在空 Sandbox 中。真正的 Adapter 合约还必须按固定 commit clone 或上传 Fixture、创建 `workspace`、准备依赖，并由后台清理器确认异步删除最终完成。删除失败必须与原业务错误一起保留，不能被吞掉。SDK 方法名应以项目锁定版本为准。升级 Daytona 时先运行手动 Smoke Test，再更新书中代码。参考：[Go SDK](https://www.daytona.io/docs/en/go-sdk/) 和 [Process Execution](https://www.daytona.io/docs/en/process-code-execution/)。
+先阅读伴随项目中的 [Sandbox Manager 接口与 Fake](https://github.com/nickdu2009/repofix-agent-book/blob/main/examples/repofix/services/control/internal/sandbox/sandbox.go)，再在 `.work/chapter-11/` 实现 Adapter 合约。真正的 Adapter 还必须按固定 commit clone 或上传 Fixture、准备依赖，并由后台清理器确认异步删除最终完成。删除失败必须与原业务错误一起保留，不能被吞掉。SDK 方法名以项目锁定版本为准；升级时先运行手动 Smoke，再更新教程。参考：[Go SDK](https://www.daytona.io/docs/en/go-sdk/) 和 [Process Execution](https://www.daytona.io/docs/en/process-code-execution/)。
 
 ## Tool Gateway 不接受任意命令
 

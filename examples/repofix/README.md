@@ -8,15 +8,19 @@ this directory unless a chapter says otherwise.
 
 ```bash
 make bootstrap
-make help
-make test
-make contract-test
+make chapter-list
+make chapter-prepare CHAPTER=chapter-01
+make chapter-check CHAPTER=chapter-01
 ```
 
 `make bootstrap` creates a local `.venv` and installs the pinned Python and Web
-tooling. `make test` covers the Python Agent/API, Go Fake control plane,
-TypeScript contract layer, deterministic Eval, and shared Schemas. Intentionally
-broken fixture repositories are excluded from that target. No default target
+tooling. Chapter preparation copies the read-only `start/` skeleton to
+`.work/chapter-NN/`; it refuses to overwrite existing work. The first structural
+check normally fails until the TODO and completion marker are resolved.
+
+After the chapter-specific behavior command passes, compare your choices with
+`labs/chapter-NN/solution/`. The solution is a review aid, not the starting
+point. Run the full deterministic suite with `make test`; no default target
 contacts a live model or cloud sandbox.
 
 To prove that the first fixture starts in a broken state, run:
@@ -41,32 +45,26 @@ Before the Daytona chapter, the companion project uses only deterministic
 or code written by a live model, in this workspace. Codespaces and a local
 checkout may contain credentials; they are development hosts, not sandboxes.
 
-## Checkpoints
+## Chapter labs and checkpoints
 
-The whole repository is versioned together. Published chapter checkpoints use
-the following tag convention:
+Every chapter uses the same layout:
+
+```text
+labs/chapter-04/start/       read-only skeleton
+.work/chapter-04/            your ignored working copy
+labs/chapter-04/solution/    reference for later comparison
+```
+
+`chapter-check` performs structural checks and never executes learner code.
+Practical chapters also list an explicit Python, Go, or TypeScript behavior
+command. See `make help` and the matching book chapter for the exact sequence.
+
+Stable releases may additionally publish immutable tags using this convention:
 
 ```text
 chapter-04-start
 chapter-04-solution
 ```
 
-First list the tags that are actually included in the current release:
-
-```bash
-git fetch --tags
-git tag --list 'chapter-*'
-```
-
-If the target start tag exists, create your own branch from it instead of
-committing on a detached tag:
-
-```bash
-git fetch --tags
-git switch -c work/chapter-04 chapter-04-start
-```
-
-The names above illustrate the convention; they do not guarantee that every
-chapter tag has already been published. If a target tag is absent, follow the
-chapter from your own branch at the current `main` baseline and do not invent
-the tag locally.
+Tags are optional snapshots, not a prerequisite for the checked-in labs. Never
+invent a missing tag or modify a detached tag directly.

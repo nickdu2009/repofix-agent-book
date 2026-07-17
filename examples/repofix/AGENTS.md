@@ -13,6 +13,7 @@ This directory contains the executable companion project for the RepoFix book.
 - `make fixture-baseline`
 - `make fake-e2e`
 - `make eval-unit`
+- `make chapter-lab-test`
 
 ## Safety
 
@@ -21,6 +22,7 @@ This directory contains the executable companion project for the RepoFix book.
 - Keep OpenAI and Daytona credentials out of fixtures, sandbox payloads, logs, events, and artifacts.
 - A model selects a semantic test target; Go maps it to a trusted command ID. The model never provides shell commands.
 - Hidden evaluation tests are never mounted in the Agent's working sandbox.
+- Chapter lab preparation writes only below `.work/`; never relax its traversal or symlink checks.
 
 ## Contracts
 

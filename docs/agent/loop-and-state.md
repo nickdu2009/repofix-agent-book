@@ -1,6 +1,21 @@
-# Agent 状态与决策循环
+# 第 05 章 · Agent 状态与决策循环
 
 这一章实现 RepoFix 最重要的部分：模型可以提出动作，但只有程序能够推进状态、计算预算并确认“候选修复已就绪”。最终 Run 成功仍由 Go 控制面在独立验证后决定。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-05/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-05` |
+| 工作副本 | `.work/chapter-05/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-05` |
+| 复盘参考 | `examples/repofix/labs/chapter-05/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-05/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+完成循环后运行 `python .work/chapter-05/exercise.py`，用成功与预算耗尽断言验证行为；结构检查不会执行学习者代码。
 
 ## 本章卡片
 

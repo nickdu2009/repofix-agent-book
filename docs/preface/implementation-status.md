@@ -15,6 +15,7 @@
 | 能力 | 状态 | 当前证据 | 尚未完成 |
 | --- | --- | --- | --- |
 | 工作区与缺陷 Fixture | 可运行 | `make bootstrap`、`make fixture-baseline` | 更多语言 Fixture |
+| 章节学习骨架 | 可运行 | 19 个 `start/`、`solution/` 与 `make chapter-check` | 随实现成熟持续扩充行为测试 |
 | Python Agent Core | 可运行 | 26 条核心/Adapter 离线测试、Ruff、零网络 Demo | 可恢复工具错误、费用预算 |
 | Python HTTP 服务 | 可运行 | 5 条 Fake Runner API 测试、取消、顶层错误契约 | Live Tool Gateway Client、错误分类、Step 事件上报 |
 | 共享 Run/Event 契约 | 可运行 | 4 份 Draft 2020-12 Schema 及正反例 | 完整 Task/Agent/Tool HTTP Schema |
@@ -42,7 +43,9 @@ make help
 
 若状态表、Makefile、CI 和正文不一致，以“不能宣称已完成”为默认判断，并提交文档缺陷 Issue。
 
-## 发布 Checkpoint
+## 骨架、参考实现与发布 Checkpoint
+
+`labs/chapter-NN/solution/` 是本章小练习的参考答案，不代表最终 RepoFix 的完整生产实现。尤其是 Daytona、PostgreSQL/SSE 与 Railway 章节，参考答案是可审查的设计或 Fake 合约；是否完成真实集成仍以上表为准。
 
 章节 tag 只在源码和验收命令同时稳定后发布：
 

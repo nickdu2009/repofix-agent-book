@@ -1,6 +1,21 @@
-# Go 控制平面
+# 第 10 章 · Go 控制平面
 
 Go 控制平面拥有 Run 的生命周期：创建、排队、Sandbox、状态、取消、恢复和最终结果。它不解析 Prompt，也不实现模型决策。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-10/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-10` |
+| 工作副本 | `.work/chapter-10/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-10` |
+| 复盘参考 | `examples/repofix/labs/chapter-10/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-10/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+完成状态转移后运行 `go run .work/chapter-10/main.go`；程序必须接受合法转移并拒绝终态回到运行态。
 
 ## 本章契约
 

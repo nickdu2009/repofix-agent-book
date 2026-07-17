@@ -1,149 +1,163 @@
-# 章节实践模板
+# 怎样完成一章
 
-## 本章目标
+这本书的主角是你的思考与实践，代码只是用来验证理解。每章都提供一个小骨架和一个参考实现，但推荐顺序始终是：先读问题、自己完成、让测试暴露误解，最后才看参考实现。
 
-本页定义全书统一的完成标准。读完后，你能够判断一章是否真的完成，而不是只把页面滚动到底部。
+## 60 秒开始
 
-## 前置条件与产物
-
-前置条件是已经阅读[学习路线](learning-path.md)。产物是一份可以复制到每个 GitHub Issue 的验收模板。
-
-## 1. 开始前先定位代码状态
-
-实施章节会给出骨架和参考实现 Checkpoint。先确认当前 release 已发布目标 tag：
+以 `chapter-05` 为例，在仓库根目录执行：
 
 ```bash
-git fetch --tags
-git tag --list 'chapter-*'
-git switch -c work/chapter-NN chapter-NN-start
 cd examples/repofix
+make chapter-prepare CHAPTER=chapter-05
+make chapter-check CHAPTER=chapter-05
 ```
 
-命令中的 `chapter-NN-*` 是命名示例。目标 tag 尚未发布时，在自己的工作分支上使用本章基线命令定位起点，不要创建同名空 tag 或假设参考实现已经存在。
+`chapter-prepare` 会把只读起点复制到 `.work/chapter-05/`。第一次 `chapter-check` 可能故意失败；失败信息就是本章的第一条学习线索。
 
-随后先执行章节列出的基线命令。基线可能是绿色测试，也可能是教程明确要求的一个失败；两者都必须和书中预期输出一致。
+每章开头的“快速开始”固定给出四个入口：
 
-## 2. 每章固定结构
+| 入口 | 用途 |
+| --- | --- |
+| Codespaces | 在浏览器中打开已配置的现代语言环境 |
+| 练习骨架 | `labs/chapter-NN/start/`，只用于生成工作副本 |
+| 结构检查 | 检查 `.work/chapter-NN/` 的归属、必需产物、TODO 与完成标记 |
+| 参考实现 | `labs/chapter-NN/solution/`，完成尝试后用于复盘 |
 
-每个实施章节都应包含以下内容：
+不要直接修改 `start/` 或把 `solution/` 复制到工作区。需要重新开始时，再次执行 `chapter-prepare`；工具会明确提示现有工作，避免静默覆盖。
 
-1. **目标**：完成后可观察到的行为，而不是“了解某概念”。
-2. **前置条件**：所需 Checkpoint、账号、密钥和已通过的测试。
-3. **产物**：完成后的文件树、接口、报告或决策记录。
-4. **原理**：这个能力解决什么问题，若缺失会如何失败。
-5. **小练习**：不超过 30 行，用来隔离学习一个语言特性。
-6. **实施步骤**：逐个文件修改，附完整代码或可应用 Diff。
-7. **运行结果**：每条命令都有成功或预期失败输出。
-8. **测试**：一条成功路径和至少两条失败路径。
-9. **故障排查**：症状、原因、诊断命令与修复方法。
-10. **分层练习**：基础、调试和扩展题。
-11. **验收**：可执行命令加人工解释题。
-12. **Checkpoint**：solution tag、最终目录树和下一章输入。
+`chapter-check` 不执行工作区代码，因此不会变成一个隐蔽的通用代码执行器。实践章还会给出明确的 Python、Go 或 TypeScript 行为命令；结构检查和行为测试都通过，才算完成。
 
-如果正文缺少其中一项，先在该章 Issue 中记录文档缺口，不要靠猜测扩大实现范围。
+## 三种学习入口
 
-## 3. 建立概念模型
+### 只用浏览器
 
-动手前写下：
+语法小练习可以在[在线练习](../playgrounds/index.md)中运行。Python 片段在浏览器内的 Pyodide 环境执行；Go 与 TypeScript 练习跳转到官方 Playground。
+
+在线练习不读取仓库、不持有密钥，也不能替代项目测试。Agent Loop、跨语言契约、文件安全和控制面练习仍应在 Codespaces 或本地环境完成。
+
+### 使用 Codespaces
+
+点击章节中的 Codespaces 链接，环境启动后执行：
+
+```bash
+cd examples/repofix
+make chapter-list
+make chapter-prepare CHAPTER=chapter-NN
+```
+
+Codespaces 是学习工作站，不是不可信代码沙箱。Daytona 章节完成前，不得在其中运行真实模型生成或修改后的仓库代码。
+
+### 使用本地环境
+
+先按[仓库与云端工作区](../foundations/cloud-workspace.md)安装版本一致的 Python、Go 和 Node.js，再使用相同的 `make chapter-*` 命令。章节骨架不会依赖 OpenAI、Daytona 或云数据库凭据。
+
+## 一章的学习循环
+
+### 1. 先写下判断
+
+动手前回答：
 
 - 这个能力解决什么工程问题？
-- 如果不实现，RepoFix 会怎样失败？
+- 如果缺失，RepoFix 会怎样失败？
 - 它属于模型决策、程序约束还是运行基础设施？
-- 谁拥有这段状态，谁有权改变它？
+- 谁拥有状态，谁有权改变状态？
 - 哪条测试可以推翻“它已经正确”的假设？
 
-## 4. 小练习进入主项目
+### 2. 只完成一个最小 TODO
 
-例如学习 Python `Protocol` 时，先在不超过 30 行的文件中定义 `ModelClient` 和 `FakeModelClient`。确认理解后，再将同一抽象放入主项目。
+骨架刻意控制在小范围：一个函数、一个状态转换、一份契约或一张决策表。先让一个失败变绿，再继续下一个，不要整章复制代码。
 
-不要直接复制完整参考实现。推荐顺序：
+理论与云服务章节也有骨架，但产物是 ADR、威胁模型、迁移计划或 Smoke 记录，不会伪装成已经完成的生产实现。
 
-```text
-阅读接口 → 自己实现 → 运行失败测试 → 修复 → 对比 solution tag
-```
+### 3. 用行为证明理解
 
-## 5. 用测试证明行为
-
-每章至少覆盖：
+实践章至少验证：
 
 | 类型 | 示例 |
 | --- | --- |
-| 成功路径 | 合法工具参数得到预期结果 |
-| 失败路径一 | 非法路径或参数被拒绝 |
-| 失败路径二 | 超时、取消、旧测试结果或依赖故障 |
+| 成功路径 | 合法输入得到明确结果 |
+| 失败路径一 | 非法路径、参数或状态被拒绝 |
+| 失败路径二 | 超时、取消、旧结果或依赖故障被处理 |
 
-“命令没有报错”和“模型说成功了”都不是充分证据。断言必须验证外部可见行为或持久化状态。
+“命令没有报错”和“模型说成功了”都不是充分证据。断言应覆盖外部可见行为、状态或持久化结果。
 
-## 6. 与 Codex 协作
+只执行该章明确列出的命令，例如：
 
-第一次实现核心机制时，让 Codex 先审查，不要让它覆盖你的代码：
+```bash
+python .work/chapter-05/exercise.py
+go run .work/chapter-10/main.go
+```
+
+TypeScript 章节使用书中给出的严格类型检查入口。理论章则用 ADR、决策表或证据清单代替伪造的可执行结果。
+
+### 4. 再对照参考实现
+
+章节检查通过或你已经记录阻塞原因后，再查看 `solution/`：
+
+```bash
+diff -ru labs/chapter-05/start labs/chapter-05/solution
+```
+
+比较时回答：参考实现多处理了哪个失败？它的取舍是否适合你的实现？如果你的方案同样满足验收，不必为了逐行一致而重写。
+
+### 5. 留下学习记录
+
+在 `docs/learning-log/` 中记录：
+
+1. 我现在能独立解释什么？
+2. 哪个失败改变了我的理解？
+3. 我的实现与参考实现为何不同？
+4. 哪部分仍依赖 Codex 才能完成？
+5. 下一章开始前必须解决什么？
+
+## 与 Codex 协作
+
+第一次实现核心机制时，先让 Codex 审查，不直接让它覆盖代码：
 
 ```text
-Review this branch against chapter-NN-start.
+Review my chapter-NN workspace against the chapter acceptance criteria.
 
 重点检查：
-- 是否满足本章验收条件
-- 状态或所有权是否遗漏
+- 状态和所有权是否遗漏
 - 超时、取消和清理是否正确
 - 是否可能在开发宿主机执行不可信代码
-- 测试是否覆盖一条成功和两条失败路径
+- 测试是否覆盖成功与失败路径
 
-先按严重程度输出问题，不修改代码。
+先按严重程度报告问题，不修改代码。
 ```
 
-确认问题后，再选择性让 Codex 修复机械性工作。保留你必须亲自实现的核心部分。
+确认问题后，再授权它修改机械性部分。你仍应能解释最终 Diff 和失败语义。
 
-## 7. 学习记录
+## GitHub 学习追踪
 
-每章在 `examples/repofix/docs/learning-log/` 新建日志，回答：
+仓库的“章节实践记录”Issue 模板与本页结构一致。每章创建一个 Issue，记录目标、解释题、测试证据、安全边界和复盘；代码进度与阅读进度因此不会混在一起。
 
-1. 我现在能解释什么？
-2. 哪个失败案例改变了我的理解？
-3. 哪部分仍依赖 Codex 才能完成？
-4. 下一章开始前必须解决什么？
+状态建议保持简单：
 
-## GitHub Issue 模板 {#github-issue-template}
-
-```markdown
-## Goal
-
-## Start checkpoint
-
-## Concepts I must explain
-
-## Files to change
-
-## Tests
-- [ ] Success path
-- [ ] Failure path 1
-- [ ] Failure path 2
-
-## Safety boundary
-
-## Codex scope
-
-## Acceptance commands
-
-## Complete checkpoint
+```text
+Backlog → Ready → In Progress → Review → Done
 ```
 
-## 验收
+只有 `make chapter-check` 通过、解释题完成并留下复盘，才移动到 `Done`。
 
-- [ ] 能先确认 tag 已发布，再从 start tag 建立自己的分支。
-- [ ] 能区分基线失败与环境故障。
-- [ ] 每章至少有一条成功和两条失败测试。
-- [ ] 会先让 Codex 审查，再决定是否授权修改。
-- [ ] 已将上面的模板保存为 GitHub Issue 模板或个人笔记。
+## Checkpoint 命名
 
-## 故障排查
+目录和未来发布标签统一使用：
 
-| 症状 | 原因 | 处理 |
-| --- | --- | --- |
-| Complete tag 的代码与正文不一致 | 书籍 release 与 tag 版本不匹配 | 回到相同 release，重新 `git fetch --tags` |
-| 基线测试意外通过 | 起始分支错误或 Fixture 被改过 | 检查 `git status` 和当前 tag |
-| 只会重复参考实现 | 跳过了小练习和失败测试 | 从已有 start tag 或干净工作分支重新开始，先实现最小接口 |
-| Codex 改动范围过大 | Issue 没有限定文件和 Done when | 撤回未授权范围，补齐 Issue 后重新审查 |
+```text
+chapter-NN-start
+chapter-NN-solution
+```
 
-## 练习与 Checkpoint
+当前仓库始终提供 `labs/chapter-NN/start/` 与 `solution/`。Git tag 只是日后稳定发布的不可变快照，不是开始学习的前置条件；列表中不存在的 tag 不得手工伪造。
 
-选择下一章中的一个 Issue，用本页模板完整描述。此页没有代码 Checkpoint；完成模板后进入[系统架构](../foundations/architecture.md)。
+## 本章完成标准
+
+- [ ] 从骨架生成了独立工作副本，没有直接修改 `start/`。
+- [ ] 能用自己的话解释本章关键取舍。
+- [ ] 实践章覆盖成功路径和两条失败路径。
+- [ ] 设计章产生可审查的文档产物，没有冒充完整实现。
+- [ ] `make chapter-check CHAPTER=chapter-NN` 通过。
+- [ ] 实践章明确列出的语言级行为命令通过。
+- [ ] 对照过参考实现并记录差异。
+- [ ] GitHub Issue 中保存了证据与复盘。

@@ -1,12 +1,42 @@
-# 上下文选择与失败恢复
+# 第 14 章 · 上下文选择与失败恢复
 
 只有评测已经暴露“上下文不够”或“重复调用”时，才增加本章能力。第一版不需要向量数据库。
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读排名、预算与恢复骨架 | `examples/repofix/labs/chapter-14/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-14/` |
+| 参考实现 | `examples/repofix/labs/chapter-14/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-14
+python .work/chapter-14/exercise.py
+make chapter-check CHAPTER=chapter-14
+```
+
+在 `.work/chapter-14/exercise.py` 中实现稳定排序与硬 Token 预算，并用固定输入验证选择结果。chapter-check 只检查 TODO；把策略迁入主项目前，收益还必须由 Eval 证明。start 不直接修改，没有收益的增强不进入主线。
 
 ## 本章契约
 
 - **前置**：已有稳定 Eval Runner 和失败分类。
 - **产物**：RepositorySummary、文件评分器、ContextBudget、重复调用检测和重规划策略。
 - **验收**：在固定案例集上提高成功率或降低成本，并能说明变化来自哪里。
+
+!!! info "诚实状态"
+    chapter-14 Lab 提供可重复的排名与预算练习；循环检测和重规划仍在正文中设计，尚未全部接入主项目 Agent Loop。只有在固定 Eval 上有收益、失败路径有测试时，才把对应实现迁入 `services/agent`。
+
+## 实践顺序
+
+1. 用同一批案例记录成功率、步骤数、Token 和失败类型，保存无增强基线。
+2. 只实现文件评分与明确的 `ContextBudget`，不要同时引入缓存和重规划。
+3. 加入重复指纹与震荡检测，构造能稳定触发的反例。
+4. 重跑相同案例，比较收益与新增失败；没有收益就撤回策略。
+5. 通过 chapter-check 后再对照 solution，并记录实现差异。
 
 ## 建立仓库摘要
 
@@ -86,6 +116,12 @@ sha256(tool_name + canonical_json(arguments) + workspace_revision)
 ## 测试与实验
 
 至少构造：大仓库目录、超大日志、重复搜索、A/B 文件震荡、无关文件噪声和取消中的重规划。每项都有预算断言，不能只观察日志。
+
+## 练习
+
+1. 让两个文件得到相同分数，定义并测试稳定的次级排序规则。
+2. 构造“参数相同但 revision 不同”的调用，证明它不应被误判为重复。
+3. 为一次无收益的上下文改进写回滚结论，而不是只展示最好的一次运行。
 
 ## 故障排查与验收
 

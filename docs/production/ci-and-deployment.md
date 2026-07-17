@@ -1,6 +1,24 @@
-# CI、Railway 部署与密钥
+# 第 17 章 · CI、部署与密钥管理
 
 发布流水线分成“永远免费且确定性”和“需要云资源且显式触发”两条路径。普通提交不能意外调用模型或创建 Sandbox。
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读 CI、部署与回滚模板 | `examples/repofix/labs/chapter-17/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-17/` |
+| 填写示例 | `examples/repofix/labs/chapter-17/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-17
+make chapter-check CHAPTER=chapter-17
+```
+
+本章的 Lab 是发布设计模板，不会假装创建 Railway 服务。在 `.work/chapter-17/` 中用当前仓库事实填写触发条件、Secret、Smoke 与回滚证据；start 只读，solution 只用于查漏。
 
 ## 本章契约
 
@@ -88,6 +106,12 @@ Smoke 验证创建 Fake Run、SSE、取消和 Artifact；监控至少覆盖 Run 
 
 回滚演练需要回答：当前镜像 SHA、最新 migration、未完成 Run 如何处理、孤儿 Sandbox 谁清理、评测是否暂停。
 
+## 练习
+
+1. 在模板中把一个付费 Eval 错放到普通 PR 触发器，再用审查规则指出风险并修正。
+2. 为“Agent ready、Control 不 ready”和“Control ready、Daytona 不可用”分别写健康检查结论。
+3. 用一份虚构故障场景填写回滚表，但所有命令、服务名和证据字段必须来自当前仓库约定。
+
 ## 故障排查与验收
 
 | 现象 | 原因 | 处理 |
@@ -96,4 +120,4 @@ Smoke 验证创建 Fake Run、SSE、取消和 Artifact；监控至少覆盖 Run 
 | Control 健康但任务全失败 | 只做存活检查 | readiness 校验 Agent 和必要配置 |
 | 回滚后旧服务读不了数据 | migration 非向前兼容 | 使用 expand/contract 迁移 |
 
-验收：任意贡献者在没有云端 Secret 时都能完成 Companion CI；只有授权维护者能启动付费测试和部署。
+验收：chapter-check 通过；任意贡献者在没有云端 Secret 时都能完成 Companion CI；只有授权维护者能启动付费测试和部署。模板中尚未验证的 Railway 项必须明确标为“待实现”，不能用示例值冒充部署证据。

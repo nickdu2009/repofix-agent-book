@@ -1,6 +1,19 @@
-# 共享契约
+# 第 08 章 · 跨语言共享契约
 
 Python、Go 和 TypeScript 不应分别手写三套 **Wire RunStatus 与 RunEvent**。伴随代码在 `examples/repofix/contracts/` 保存机器可验证的 JSON Schema。Python 内部 `AgentStatus.CANDIDATE_READY` 是不同领域概念，绝不能序列化成最终 Run `succeeded`。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-08/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-08` |
+| 工作副本 | `.work/chapter-08/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-08` |
+| 复盘参考 | `examples/repofix/labs/chapter-08/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-08/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
 
 ## 本章契约
 

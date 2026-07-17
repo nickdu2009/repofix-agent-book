@@ -39,7 +39,8 @@ nav:
   - 首页: index.md
   - 阅读指南:
       - 学习目标与方法: preface/learning-path.md
-      - 章节实践模板: preface/chapter-workflow.md
+      - 怎样完成一章: preface/chapter-workflow.md
+      - 在线语法练习: playgrounds/index.md
       - 伴随代码完成状态: preface/implementation-status.md
   - 第一部分 · 打好工程地基:
       - 系统架构: foundations/architecture.md
@@ -98,5 +99,9 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/online-runner.css
+
+extra_javascript:
+  - assets/javascripts/python-runner.js
 
 copyright: Copyright &copy; 2026 nickdu2009

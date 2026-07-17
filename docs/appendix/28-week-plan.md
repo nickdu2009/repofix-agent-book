@@ -2,6 +2,8 @@
 
 > 每周投入 5～7 小时。正文定义“做什么和为什么”，本附录只负责时间落地。每个阶段先通过 Checkpoint 再继续，不以日历替代验收。
 
+章号以 `examples/repofix/chapters.json` 为准；周次只是建议节奏，同一章可以跨周，某周也可以完成多个小章。每次实践用 `make chapter-prepare CHAPTER=chapter-NN` 将只读 start 复制到 `.work/chapter-NN/`，并以 `make chapter-check CHAPTER=chapter-NN` 作为最低机器验收。
+
 | 周 | 项目实践 | 语言学习重点 | 周产物 |
 | --- | --- | --- | --- |
 | 1 | 创建 GitHub 仓库、Projects、Codespaces | Python 环境、模块、类型标注 | 仓库骨架、学习看板 |

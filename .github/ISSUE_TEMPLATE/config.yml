@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 在线阅读 RepoFix 教程
+    url: https://nickdu2009.github.io/repofix-agent-book/
+    about: 提交问题前先确认当前发布版本与章节说明。
+

@@ -1,0 +1,85 @@
+name: 章节实践记录
+description: 用一个 Issue 跟踪一章的动手过程、测试证据和复盘。
+title: "[Chapter NN] "
+body:
+  - type: dropdown
+    id: chapter
+    attributes:
+      label: 章节
+      description: 选择本次实践对应的章节。
+      options:
+        - chapter-01 系统架构
+        - chapter-02 仓库与云端工作区
+        - chapter-03 第一个缺陷练习仓库
+        - chapter-04 Python 基础恢复
+        - chapter-05 Agent 状态与决策循环
+        - chapter-06 工具系统与安全边界
+        - chapter-07 运行时架构决策
+        - chapter-08 跨语言共享契约
+        - chapter-09 Python Agent 服务化
+        - chapter-10 Go 控制平面
+        - chapter-11 Daytona 云沙箱
+        - chapter-12 持久化、恢复与事件
+        - chapter-13 评测体系
+        - chapter-14 上下文选择与失败恢复
+        - chapter-15 TypeScript 基础
+        - chapter-16 Web 客户端
+        - chapter-17 CI、部署与密钥管理
+        - chapter-18 ChatGPT 与 Codex 协作
+        - chapter-19 完成标准与后续方向
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 本章目标
+      description: 用可观察行为描述完成状态，不要只写“看完”。
+      placeholder: 完成本章后，我能够……
+    validations:
+      required: true
+
+  - type: textarea
+    id: explain
+    attributes:
+      label: 我必须能解释的概念
+      description: 列出不依赖参考答案也能说明的关键概念。
+      placeholder: |
+        - [ ] …
+        - [ ] …
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: 实践与测试
+      description: 记录自己的工作目录、修改文件和测试证据。
+      value: |
+        - [ ] 已执行 `make chapter-prepare CHAPTER=chapter-NN`
+        - [ ] 已完成骨架中的 TODO
+        - [ ] 成功路径已通过
+        - [ ] 失败路径一已通过
+        - [ ] 失败路径二已通过
+        - [ ] 已执行 `make chapter-check CHAPTER=chapter-NN`
+    validations:
+      required: true
+
+  - type: textarea
+    id: safety
+    attributes:
+      label: 安全边界
+      description: 本章会接触哪些不可信输入、密钥或执行环境？如何限制？
+    validations:
+      required: true
+
+  - type: textarea
+    id: reflection
+    attributes:
+      label: 复盘
+      description: 完成后补充失败原因、与参考实现的差异和下一步。
+      placeholder: |
+        最有价值的失败：
+        我与参考实现的主要差异：
+        下一章前要解决：
+

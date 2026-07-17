@@ -1,6 +1,21 @@
-# Python Agent 服务化
+# 第 09 章 · Python Agent 服务化
 
 Python 服务只拥有一次 Run 内部的模型决策循环。Go 传入 Run、任务和短期 Tool Gateway capability，Python 返回结构化候选结果。当前 Fake HTTP 闭环尚未上报 Step 事件；事件上报要等 Tool Gateway Client 与事件端口接入后实现。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-09/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-09` |
+| 工作副本 | `.work/chapter-09/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-09` |
+| 复盘参考 | `examples/repofix/labs/chapter-09/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-09/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+运行 `python .work/chapter-09/exercise.py` 验证合法请求与空字段失败；完整 FastAPI 行为仍由本章后文的服务测试证明。
 
 ## 本章契约
 

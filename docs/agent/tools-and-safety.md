@@ -1,6 +1,21 @@
-# 工具系统与安全边界
+# 第 06 章 · 工具系统与安全边界
 
 工具让模型影响外部世界，也是 RepoFix 风险最高的边界。本章把工具协议、路径限制和执行隔离分别处理；命令名白名单不再被描述成沙箱。
+
+## 快速开始
+
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-06/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-06` |
+| 工作副本 | `.work/chapter-06/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-06` |
+| 复盘参考 | `examples/repofix/labs/chapter-06/solution/` |
+
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-06/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
+
+完成路径函数后运行 `python .work/chapter-06/exercise.py`，确认正常路径与逃逸路径都符合预期；只运行教程自带的短练习。
 
 ## 本章卡片
 

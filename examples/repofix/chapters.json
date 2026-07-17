@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "checkpoint_names": {
+    "start": "chapter-NN-start",
+    "solution": "chapter-NN-solution"
+  },
+  "chapters": [
+    {"id": "chapter-01", "title": "系统架构", "doc": "foundations/architecture.md", "kind": "template"},
+    {"id": "chapter-02", "title": "仓库与云端工作区", "doc": "foundations/cloud-workspace.md", "kind": "workspace"},
+    {"id": "chapter-03", "title": "第一个缺陷练习仓库", "doc": "foundations/fixture.md", "kind": "python"},
+    {"id": "chapter-04", "title": "Python 基础恢复", "doc": "agent/python-foundations.md", "kind": "python"},
+    {"id": "chapter-05", "title": "Agent 状态与决策循环", "doc": "agent/loop-and-state.md", "kind": "python"},
+    {"id": "chapter-06", "title": "工具系统与安全边界", "doc": "agent/tools-and-safety.md", "kind": "python"},
+    {"id": "chapter-07", "title": "运行时架构决策", "doc": "runtime/architecture-decisions.md", "kind": "template"},
+    {"id": "chapter-08", "title": "跨语言共享契约", "doc": "runtime/contracts.md", "kind": "contract"},
+    {"id": "chapter-09", "title": "Python Agent 服务化", "doc": "runtime/python-service.md", "kind": "python"},
+    {"id": "chapter-10", "title": "Go 控制平面", "doc": "runtime/go-control-plane.md", "kind": "go"},
+    {"id": "chapter-11", "title": "Daytona 云沙箱", "doc": "runtime/daytona-sandbox.md", "kind": "template"},
+    {"id": "chapter-12", "title": "持久化、恢复与事件", "doc": "runtime/persistence-and-events.md", "kind": "template"},
+    {"id": "chapter-13", "title": "评测体系", "doc": "evaluation/evaluation-system.md", "kind": "python"},
+    {"id": "chapter-14", "title": "上下文选择与失败恢复", "doc": "evaluation/context-and-recovery.md", "kind": "python"},
+    {"id": "chapter-15", "title": "TypeScript 基础", "doc": "product/typescript-foundations.md", "kind": "typescript"},
+    {"id": "chapter-16", "title": "Web 客户端", "doc": "product/web-console.md", "kind": "typescript"},
+    {"id": "chapter-17", "title": "CI、部署与密钥管理", "doc": "production/ci-and-deployment.md", "kind": "template"},
+    {"id": "chapter-18", "title": "ChatGPT 与 Codex 协作", "doc": "production/chatgpt-and-codex.md", "kind": "template"},
+    {"id": "chapter-19", "title": "完成标准与后续方向", "doc": "production/completion.md", "kind": "template"}
+  ]
+}

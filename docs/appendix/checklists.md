@@ -1,5 +1,13 @@
 # 学习检查清单
 
+## 每章 Lab
+
+- [ ] 把 `examples/repofix/labs/chapter-NN/start/` 视为只读骨架，而不是直接编辑。
+- [ ] 已执行 `make chapter-prepare CHAPTER=chapter-NN`，在 `.work/chapter-NN/` 完成 TODO；目标已存在时不强制覆盖。
+- [ ] 已执行 `make chapter-check CHAPTER=chapter-NN`，并能解释失败或通过的原因。
+- [ ] 只在自己完成后对照 `labs/chapter-NN/solution/`，记录差异而不是整目录复制。
+- [ ] 若发布 Git tag，名称使用 `chapter-NN-start` 与 `chapter-NN-solution`。
+
 ## Agent MVP
 
 - [ ] `make -C examples/repofix test` 在没有云端密钥时通过。

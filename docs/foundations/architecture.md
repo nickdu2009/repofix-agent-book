@@ -1,4 +1,22 @@
-# 系统架构与信任边界
+# 第 01 章 · 系统架构：信任边界
+
+## 快速开始
+
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
+
+| 用途 | 路径 |
+| --- | --- |
+| 只读架构骨架 | `examples/repofix/labs/chapter-01/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-01/` |
+| 完成后的参考模板 | `examples/repofix/labs/chapter-01/solution/` |
+
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-01
+make chapter-check CHAPTER=chapter-01
+```
+
+`chapter-prepare` 把只读 start 骨架复制到 `.work/chapter-01/`。本章是设计章：在工作副本中填写所有权、信任边界和失败处理 TODO，再运行检查。`solution/` 只用于完成后复盘，不是需要复制进产品的虚构实现。
 
 ## 本章目标
 

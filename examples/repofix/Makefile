@@ -6,12 +6,20 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_RUFF := $(VENV)/bin/ruff
 WEB_DIR := apps/web
 WEB_READY := $(WEB_DIR)/node_modules/.package-lock.json
+CHAPTER ?=
+VARIANT ?= start
+PYTHON_LAB_SOLUTIONS := $(wildcard labs/chapter-*/solution/exercise.py)
+GO_LAB_SOLUTIONS := $(wildcard labs/chapter-*/solution/main.go)
+TS_LAB_SOLUTIONS := $(wildcard labs/chapter-*/solution/exercise.ts)
 
 JSONSCHEMA_VERSION := 4.25.1
 
 .PHONY: help bootstrap web-bootstrap check-tools check-python check-go check-node \
 	test agent-test go-test go-race web-test \
-	lint contract-test fixture-test fixture-baseline fake-e2e eval-unit eval-fixtures clean
+	lint contract-test fixture-test fixture-baseline fake-e2e eval-unit eval-fixtures \
+	chapter-list chapter-prepare chapter-check chapter-lab-test \
+	chapter-python-solutions chapter-go-solutions chapter-web-solutions \
+	require-chapter clean
 
 help:
 	@echo "RepoFix deterministic commands:"
@@ -21,7 +29,43 @@ help:
 	@echo "  make fixture-baseline  assert the authored fixture has exactly one known failure"
 	@echo "  make fake-e2e          run the zero-cloud Go control-plane E2E"
 	@echo "  make eval-unit         run the zero-cloud independent-oracle tests"
+	@echo "  make chapter-list      list the 19 chapter labs"
+	@echo "  make chapter-prepare CHAPTER=chapter-05"
+	@echo "  make chapter-check   CHAPTER=chapter-05"
+	@echo "  make chapter-lab-test  validate lab structure and safe paths"
 	@echo "Cloud targets are added only when their implementation checkpoint is published."
+
+require-chapter:
+	@if [[ -z "$(CHAPTER)" ]]; then \
+		echo "ERROR: set CHAPTER=chapter-NN"; \
+		exit 2; \
+	fi
+
+chapter-list:
+	@$(PYTHON) scripts/chapter_lab.py list
+
+chapter-prepare: require-chapter
+	@$(PYTHON) scripts/chapter_lab.py prepare "$(CHAPTER)" --variant "$(VARIANT)"
+
+chapter-check: require-chapter
+	@$(PYTHON) scripts/chapter_lab.py check "$(CHAPTER)"
+
+chapter-lab-test:
+	@$(PYTHON) -m unittest discover -s scripts/tests -p 'test_*.py'
+
+chapter-python-solutions: check-python
+	@for file in $(PYTHON_LAB_SOLUTIONS); do $(PYTHON) "$$file"; done
+
+chapter-go-solutions: check-go
+	@for file in $(GO_LAB_SOLUTIONS); do \
+		test -z "$$(gofmt -l "$$file")" || { echo "$$file needs gofmt"; exit 1; }; \
+		go run "$$file"; \
+	done
+
+chapter-web-solutions: check-node $(WEB_READY)
+	@$(WEB_DIR)/node_modules/.bin/tsc --noEmit --strict --target ES2024 \
+		--moduleDetection force $(TS_LAB_SOLUTIONS)
+	@for file in $(TS_LAB_SOLUTIONS); do node "$$file"; done
 
 bootstrap: check-tools $(VENV)/.ready $(WEB_READY)
 	@echo "RepoFix bootstrap complete. Run: make test"
@@ -51,7 +95,8 @@ $(VENV)/.ready: Makefile services/agent/pyproject.toml
 $(WEB_READY): $(WEB_DIR)/package.json $(WEB_DIR)/package-lock.json
 	@cd $(WEB_DIR) && npm ci
 
-test: agent-test go-test web-test eval-unit contract-test
+test: agent-test go-test web-test eval-unit contract-test chapter-lab-test \
+	chapter-python-solutions chapter-go-solutions chapter-web-solutions
 
 agent-test: check-python $(VENV)/.ready
 	@cd services/agent && ../../$(VENV_PYTHON) -m pytest
@@ -79,7 +124,7 @@ fake-e2e: check-go
 
 lint: check-python check-go $(VENV)/.ready
 	@paths=(); \
-	for path in fixtures services evals; do [[ -d "$$path" ]] && paths+=("$$path"); done; \
+	for path in fixtures services evals scripts labs; do [[ -d "$$path" ]] && paths+=("$$path"); done; \
 	if (( $${#paths[@]} )); then $(VENV_RUFF) check "$${paths[@]}"; else echo "No Python paths to lint yet"; fi
 	@unformatted="$$(gofmt -l services/control)"; \
 	if [[ -n "$$unformatted" ]]; then echo "Go files need gofmt:"; echo "$$unformatted"; exit 1; fi
