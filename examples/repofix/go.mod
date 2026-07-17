@@ -1,3 +1,3 @@
 module github.com/nickdu2009/repofix-agent-book/examples/repofix
 
-go 1.25
+go 1.26

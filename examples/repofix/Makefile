@@ -30,16 +30,16 @@ web-bootstrap: check-node $(WEB_READY)
 
 check-tools:
 	@$(MAKE) --no-print-directory check-python check-go check-node
-	@echo "Toolchain check passed: Python 3.12, Go 1.25, Node.js 22.12+"
+	@echo "Toolchain check passed: Python 3.14, Go 1.26, Node.js 24 LTS"
 
 check-python:
-	@$(PYTHON) -c 'import sys; assert sys.version_info[:2] == (3, 12), "RepoFix requires Python 3.12.x"'
+	@$(PYTHON) -c 'import sys; assert sys.version_info[:2] == (3, 14), "RepoFix requires Python 3.14.x"'
 
 check-go:
-	@go version | grep -Eq 'go1\.25(\.| )' || { echo "RepoFix requires Go 1.25.x"; exit 1; }
+	@go version | grep -Eq 'go1\.26(\.| )' || { echo "RepoFix requires Go 1.26.x"; exit 1; }
 
 check-node:
-	@node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if (major !== 22 || minor < 12) { throw new Error("RepoFix requires Node.js >=22.12.0 <23") }'
+	@node -e 'const major = Number(process.versions.node.split(".")[0]); if (major !== 24) { throw new Error("RepoFix requires Node.js 24.x LTS") }'
 
 $(VENV)/.ready: Makefile services/agent/pyproject.toml
 	@$(PYTHON) -m venv $(VENV)

@@ -12,7 +12,7 @@ Daytona 是 RepoFix 执行不可信仓库代码的边界。接入本章之前，
 !!! warning "设计蓝图，尚未发布云端 Adapter"
     当前仓库只有 Fake Sandbox 合约和下面的锁版实现指南，没有 Daytona SDK 依赖、`sandbox-smoke` target 或云端测试。完成真实 Adapter、锁定 `go.mod` 并通过手动 Smoke 后，才会发布本章 complete tag。
 
-当前 Daytona Go SDK 要求 Go 1.25 或更高版本。正式接入时把 SDK 精确版本写入 `go.mod`，不要在教材分支上长期使用未锁定的 `@latest`：
+Daytona Go SDK 要求 Go 1.25 或更高版本；本书统一使用 Go 1.26.x。正式接入时把 SDK 精确版本写入 `go.mod`，不要在教材分支上长期使用未锁定的 `@latest`：
 
 ```bash
 go get github.com/daytona/clients/sdk-go@<本章 checkpoint 锁定版本>

@@ -17,7 +17,7 @@ class AgentStatus(StrEnum):
     CANCELLED = "cancelled"
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class ToolResult:
     """The only result shape an executor may return to the core."""
 
@@ -27,22 +27,22 @@ class ToolResult:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class ToolCall:
     call_id: str
     name: str
     arguments_json: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class AssistantText:
     text: str
 
 
-ModelOutput = ToolCall | AssistantText
+type ModelOutput = ToolCall | AssistantText
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class ModelResponse:
     """Normalized model output; no OpenAI SDK object crosses this boundary."""
 
@@ -52,7 +52,7 @@ class ModelResponse:
     history_items: tuple[dict[str, Any], ...] = ()
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class RunBudget:
     max_steps: int = 20
     max_model_calls: int = 20
@@ -66,7 +66,7 @@ class RunBudget:
             raise ValueError("token and time budgets must be positive")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class StepRecord:
     number: int
     call_id: str
@@ -76,7 +76,7 @@ class StepRecord:
     workspace_revision: int
 
 
-@dataclass
+@dataclass(slots=True)
 class AgentState:
     task: str
     status: AgentStatus = AgentStatus.RUNNING
@@ -96,7 +96,7 @@ class AgentState:
         return self.input_tokens + self.output_tokens
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class AgentRunResult:
     summary: str
     state: AgentState

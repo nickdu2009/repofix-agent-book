@@ -2,6 +2,8 @@
 
 TypeScript 从 RepoFix 的 API 边界开始学习。编译期类型不能验证网络数据，因此 JSON Schema 是跨语言事实来源，Zod 负责浏览器运行时校验。
 
+本章使用 Node.js 24 LTS、TypeScript 7、React 19 和 ESM。`tsconfig.json` 开启 `strict`、`noUncheckedIndexedAccess`、`exactOptionalPropertyTypes`、`verbatimModuleSyntax`、未使用符号检查与 `switch` 穿透检查。现代 TypeScript 的重点是让边界更可靠，而不是编写复杂条件类型。
+
 ## 本章契约
 
 - **前置**：`examples/repofix/contracts/` 已稳定，Fake Go API 可启动。
@@ -20,7 +22,7 @@ npm ci
 
 `package.json` 固定直接依赖版本，`package-lock.json` 固定完整依赖树。升级 React、Vite、TypeScript 或 Zod 必须作为单独 Issue，同时运行 typecheck、测试和生产构建；不要在教程主线使用 `npm create ...@latest` 重新生成项目。
 
-`tsconfig` 必须启用 `strict`、`noUncheckedIndexedAccess` 和 `exactOptionalPropertyTypes`。不要用 `any` 绕过外部数据边界。
+`tsconfig` 必须启用 `strict`、`noUncheckedIndexedAccess`、`exactOptionalPropertyTypes` 和 `verbatimModuleSyntax`。类型导入使用 `import type`，不要用 `any` 或强制断言绕过外部数据边界。
 
 ## 统一状态
 

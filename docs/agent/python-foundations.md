@@ -7,7 +7,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 前置章节 | 云端工作区；第一个缺陷练习仓库 |
-| 开发基线 | Codespaces 使用 Python 3.12；包保持兼容 Python 3.11+ |
+| 开发基线 | Python 3.14.x；只使用稳定语言特性 |
 | 最终产物 | `repofix_agent` 源码包、确定性 Demo、完整离线单元测试 |
 | 预计时间 | 2～3 小时 |
 | 安全边界 | 本章不允许真实模型执行宿主机工具或命令 |
@@ -73,11 +73,11 @@ make test
 ```toml
 [project]
 name = "repofix-agent"
-requires-python = ">=3.11"
+requires-python = ">=3.14,<3.15"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["httpx==0.28.1", "pytest==8.4.1", "ruff==0.12.4"]
+dev = ["httpx==0.28.1", "pytest==9.1.1", "ruff==0.15.22"]
 live = ["openai>=2.0,<3"]
 service = ["fastapi==0.139.2", "pydantic==2.13.4", "uvicorn==0.51.0"]
 
@@ -92,6 +92,7 @@ testpaths = ["tests"]
 2. OpenAI SDK 是 `live` 可选依赖，只存在于适配器一侧。
 3. FastAPI、Pydantic 和 Uvicorn 只在 `service` extra 中；HTTPX 只用于离线 ASGI 测试。
 4. `src` 布局避免测试偶然从项目根目录导入错误模块。
+5. Python 版本限定为 3.14 系列，让正文、骨架、CI 和类型工具使用同一套现代语义。
 
 ## 3. 用 Go 经验理解第一批 Python 特性
 
@@ -99,8 +100,10 @@ testpaths = ["tests"]
 | --- | --- | --- | --- |
 | 类型标注 | 工具参数、状态和返回值 | 静态类型声明 | 默认不在运行时强制检查 |
 | `dataclass` | `AgentState`、`ToolResult` | `struct` | 可生成初始化和比较方法 |
+| `dataclass(slots=True)` | 小型领域 DTO | 更紧凑的固定字段 struct | 不再允许运行时随意添加属性 |
 | `StrEnum` | `AgentStatus` | 自定义字符串常量 | 同时是枚举和值为字符串的类型；不要与 Go 拥有的 RunStatus 混用 |
 | `Protocol` | `ModelClient`、`ToolExecutor` | `interface` | 采用结构化子类型，无需显式注册 |
+| `type` 类型别名 | `ModelOutput` 等联合类型 | `type` 声明 | 只服务静态类型，不做运行时校验 |
 | `Path` | 工作区路径校验 | `filepath` | `resolve()` 会处理符号链接 |
 | 异常 | 协议、预算、取消失败 | `error` | 沿调用栈传播，不作为返回值 |
 | pytest fixture | 临时目录和测试替身 | `testing` helper | 由名字注入测试函数 |
@@ -112,14 +115,14 @@ testpaths = ["tests"]
 模型适配器把外部响应归一化成自己的对象：
 
 ```python
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class ToolCall:
     call_id: str
     name: str
     arguments_json: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class ModelResponse:
     output: tuple[ToolCall | AssistantText, ...]
     input_tokens: int = 0

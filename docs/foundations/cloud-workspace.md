@@ -31,21 +31,24 @@ examples/repofix/
 
 ## 1. 固定版本基线
 
-本版教程故意固定主版本，不追逐每周最新版本：
+本版教程使用当前稳定或 LTS 主版本，并在一个教程版本内保持固定；不使用预发布版本，也不追逐每周补丁更新：
 
 | 工具 | 教程基线 | 用途 |
 | --- | --- | --- |
-| Python | 开发基线 3.12.x；包最低支持 3.11 | Agent、服务和评测 |
-| Go | 1.25.x | 控制平面与 Daytona Go SDK |
-| Node.js | 22.12+（且小于 23） | TypeScript Web |
-| pytest | 8.4.1 | Python 测试 |
-| Ruff | 0.12.4 | Python Lint |
+| Python | 3.14.x | Agent、服务和评测 |
+| Go | 1.26.x | 控制平面与 Daytona Go SDK |
+| Node.js | 24.x LTS | TypeScript Web 工具链 |
+| TypeScript | 7.0.2 | Web 编译与类型检查 |
+| pytest | 9.1.1 | Python 测试 |
+| Ruff | 0.15.22 | Python Lint |
 | FastAPI | 0.139.2 | Python HTTP 边界 |
 | Pydantic | 2.13.4 | HTTP 与配置校验 |
 | Uvicorn | 0.51.0 | Python ASGI Server |
 | HTTPX | 0.28.1 | 离线 ASGI 测试 |
 
-Python、Go 和 Node.js 使用表中的主版本基线；pytest、Ruff、FastAPI、Pydantic、Uvicorn 和 HTTPX 则由项目文件固定到表中的精确版本。升级基线应作为独立 Issue，先在全部 Checkpoint 上运行 CI，再修改书中版本。
+版本依据来自各项目的稳定发布信息：[Go Release History](https://go.dev/doc/devel/release)、[Python Downloads](https://www.python.org/downloads/)、[Node.js Releases](https://nodejs.org/en/about/previous-releases) 和 [TypeScript](https://www.typescriptlang.org/)。Python 3.15 与 Node.js 26 当前不作为教程基线：前者仍是预发布系列，后者仍处于 Current 而不是 LTS。
+
+Python、Go 和 Node.js 使用表中的主版本基线；TypeScript、pytest、Ruff、FastAPI、Pydantic、Uvicorn 和 HTTPX 则由项目文件固定到表中的精确版本。这里的“现代”指稳定语言版本、严格类型和当前工程工具，不代表每个示例都必须使用最新语法。升级基线应作为独立 Issue，先在全部 Checkpoint 上运行 CI，再修改书中版本。
 
 ## 2. 推荐方式：GitHub Codespaces
 
@@ -81,7 +84,7 @@ make bootstrap
 
 ## 3. 本地开发方式
 
-本地已经安装 Python 3.12、Go 1.25、Node.js 22.12+（且小于 23）和 GNU Make 时，可以执行：
+本地已经安装 Python 3.14、Go 1.26、Node.js 24 LTS 和 GNU Make 时，可以执行：
 
 ```bash
 git clone https://github.com/nickdu2009/repofix-agent-book.git
@@ -111,7 +114,7 @@ make bootstrap
 成功输出中应包含：
 
 ```text
-Toolchain check passed: Python 3.12, Go 1.25, Node.js 22.12+
+Toolchain check passed: Python 3.14, Go 1.26, Node.js 24 LTS
 RepoFix bootstrap complete. Run: make test
 ```
 
@@ -211,7 +214,7 @@ git status --short
 
 | 症状 | 诊断 | 处理 |
 | --- | --- | --- |
-| `RepoFix requires Python 3.12.x` | `python3 --version` | 重新使用指定 Dev Container，不删除版本检查 |
+| `RepoFix requires Python 3.14.x` | `python3 --version` | 重新使用指定 Dev Container，不删除版本检查 |
 | Codespace 打开在仓库根目录 | `pwd` | `cd examples/repofix`，下次使用本页预配置入口 |
 | pip 下载失败 | `python3 -m pip index versions pytest` | 检查网络/代理后重试 `make bootstrap`，不要提交 `.venv` |
 | `make test` 找不到 Fixture | `git status` 与 `git rev-parse --abbrev-ref HEAD` | 切到正确 Checkpoint 并拉取完整仓库 |
