@@ -40,17 +40,21 @@ nav:
   - 阅读指南:
       - 学习目标与方法: preface/learning-path.md
       - 章节实践模板: preface/chapter-workflow.md
+      - 伴随代码完成状态: preface/implementation-status.md
   - 第一部分 · 打好工程地基:
       - 系统架构: foundations/architecture.md
       - 仓库与云端工作区: foundations/cloud-workspace.md
+      - 第一个缺陷练习仓库: foundations/fixture.md
   - 第二部分 · 手写 Python Agent:
       - Python 基础恢复: agent/python-foundations.md
       - Agent 状态与决策循环: agent/loop-and-state.md
       - 工具系统与安全边界: agent/tools-and-safety.md
   - 第三部分 · 构建可靠运行时:
-      - Daytona 云沙箱: runtime/daytona-sandbox.md
-      - Go 控制平面: runtime/go-control-plane.md
+      - 运行时架构决策: runtime/architecture-decisions.md
+      - 跨语言共享契约: runtime/contracts.md
       - Python Agent 服务化: runtime/python-service.md
+      - Go 控制平面: runtime/go-control-plane.md
+      - Daytona 云沙箱: runtime/daytona-sandbox.md
       - 持久化、恢复与事件: runtime/persistence-and-events.md
   - 第四部分 · 用评测驱动改进:
       - 评测体系: evaluation/evaluation-system.md

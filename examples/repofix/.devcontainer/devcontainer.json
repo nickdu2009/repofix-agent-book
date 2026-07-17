@@ -1,0 +1,29 @@
+{
+  "name": "RepoFix companion workspace",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/repofix",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.25"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "make bootstrap",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "golang.go",
+        "dbaeumer.vscode-eslint",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  }
+}

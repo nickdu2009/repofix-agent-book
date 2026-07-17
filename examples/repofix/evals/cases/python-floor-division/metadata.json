@@ -1,0 +1,7 @@
+{
+  "case_id": "python-floor-division",
+  "language": "python",
+  "test_target": "unit",
+  "timeout_seconds": 30,
+  "forbidden_paths": ["tests/**", ".github/**"]
+}

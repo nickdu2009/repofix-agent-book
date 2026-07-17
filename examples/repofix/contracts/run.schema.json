@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repofix.dev/schemas/run.schema.json",
+  "title": "Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "task_id", "status", "created_at", "updated_at", "version"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "status": {
+      "type": "string",
+      "enum": ["pending", "provisioning", "running", "succeeded", "failed", "cancelled", "timed_out"]
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "version": {"type": "integer", "minimum": 1},
+    "failure_code": {"type": ["string", "null"]},
+    "cancel_requested_at": {"type": ["string", "null"], "format": "date-time"}
+  }
+}
