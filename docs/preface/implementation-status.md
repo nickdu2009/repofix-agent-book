@@ -51,4 +51,4 @@ git fetch --tags
 git tag --list 'chapter-*'
 ```
 
-列表中没有的 tag 就没有发布。当前分支上的“可运行”状态由 CI 证明；start/complete tag 会在后续 release 中逐章补齐。
+列表中没有的 tag 就没有发布。当前分支上的“可运行”状态由 CI 证明；`chapter-NN-start` / `chapter-NN-solution` tag 会在后续 release 中逐章补齐。`start` 是可动手的骨架，`solution` 是用于复盘和比较的参考实现。

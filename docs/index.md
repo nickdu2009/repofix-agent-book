@@ -61,7 +61,7 @@
 
 ```text
 chapter-04-start       本章开始状态
-chapter-04-complete    本章完成状态
+chapter-04-solution    本章参考实现
 ```
 
 先列出当前版本真正提供的章节 tag：

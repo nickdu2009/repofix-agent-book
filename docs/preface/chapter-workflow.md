@@ -10,7 +10,7 @@
 
 ## 1. 开始前先定位代码状态
 
-实施章节会给出起始和完成 Checkpoint。先确认当前 release 已发布目标 tag：
+实施章节会给出骨架和参考实现 Checkpoint。先确认当前 release 已发布目标 tag：
 
 ```bash
 git fetch --tags
@@ -38,7 +38,7 @@ cd examples/repofix
 9. **故障排查**：症状、原因、诊断命令与修复方法。
 10. **分层练习**：基础、调试和扩展题。
 11. **验收**：可执行命令加人工解释题。
-12. **Checkpoint**：完成 tag、最终目录树和下一章输入。
+12. **Checkpoint**：solution tag、最终目录树和下一章输入。
 
 如果正文缺少其中一项，先在该章 Issue 中记录文档缺口，不要靠猜测扩大实现范围。
 
@@ -59,7 +59,7 @@ cd examples/repofix
 不要直接复制完整参考实现。推荐顺序：
 
 ```text
-阅读接口 → 自己实现 → 运行失败测试 → 修复 → 对比 complete tag
+阅读接口 → 自己实现 → 运行失败测试 → 修复 → 对比 solution tag
 ```
 
 ## 5. 用测试证明行为

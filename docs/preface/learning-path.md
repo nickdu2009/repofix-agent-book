@@ -85,19 +85,19 @@ docs/                 教程正文
 examples/repofix/     可运行的主线项目
 ```
 
-实施章节成熟后会发布 `chapter-NN-start` 与 `chapter-NN-complete` tag。先确认当前 release 已提供目标 tag；不要把文档中的占位符当成真实版本：
+实施章节成熟后会发布 `chapter-NN-start` 与 `chapter-NN-solution` tag。`start` 表示包含 TODO 和验收测试的起始骨架，`solution` 表示通过本章验收的参考实现。先确认当前 release 已提供目标 tag；不要把文档中的占位符当成真实版本：
 
 ```bash
 git fetch --tags
 git tag --list 'chapter-*'
 ```
 
-目标 tag 存在时，推荐从 start tag 建个人分支，完成后与 complete tag 比较：
+目标 tag 存在时，推荐从 start tag 建个人分支，完成后与 solution tag 比较：
 
 ```bash
 git fetch --tags
 git switch -c work/chapter-NN chapter-NN-start
-git diff chapter-NN-complete -- examples/repofix
+git diff chapter-NN-solution -- examples/repofix
 ```
 
 比较 Diff 是为了发现遗漏，不是直接覆盖自己的实现。

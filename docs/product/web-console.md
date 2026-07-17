@@ -9,7 +9,7 @@ Web 控制台只实现 RepoFix 的核心反馈环：创建任务、观察 Run、
 - **验收**：无云端密钥时，Fake E2E 可以从创建 Run 走到成功页面。
 
 !!! info "当前 Checkpoint 与目标 Checkpoint"
-    当前伴随 Web 已完成 Zod 契约、API Client、Run Reducer、可关闭 SSE 订阅及 12 条单元测试，`App` 仍是最小入口。下面的三个页面、Artifact 视图和 Playwright Fake E2E 是本章要继续实现的目标，尚未发布完成 tag。
+    当前伴随 Web 已完成 Zod 契约、API Client、Run Reducer、可关闭 SSE 订阅及 12 条单元测试，`App` 仍是最小入口。下面的三个页面、Artifact 视图和 Playwright Fake E2E 是本章要继续实现的目标，尚未发布 solution tag。
 
 ## 页面和组件
 

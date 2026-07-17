@@ -48,7 +48,7 @@ the following tag convention:
 
 ```text
 chapter-04-start
-chapter-04-complete
+chapter-04-solution
 ```
 
 First list the tags that are actually included in the current release:
