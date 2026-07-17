@@ -1,5 +1,7 @@
 # RepoFix AI Agent 实践教程
 
+[![Deploy book to GitHub Pages](https://github.com/nickdu2009/repofix-agent-book/actions/workflows/pages.yml/badge.svg)](https://github.com/nickdu2009/repofix-agent-book/actions/workflows/pages.yml)
+
 一本面向 Go 后端工程师的 AI Agent 工程实践教程。通过主线项目 RepoFix，逐步手写 Agent Loop、构建工具系统、接入云沙箱、实现 Go 控制平面、建立评测体系，并用 TypeScript 完成可视化控制台。
 
 在线阅读：<https://nickdu2009.github.io/repofix-agent-book/>
