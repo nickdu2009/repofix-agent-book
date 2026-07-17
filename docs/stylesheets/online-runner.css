@@ -1,0 +1,61 @@
+.repofix-python-runner {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.5rem;
+  background: var(--md-code-bg-color);
+}
+
+.repofix-python-runner h3 {
+  margin: 0;
+}
+
+.repofix-python-runner textarea {
+  width: 100%;
+  min-height: 13rem;
+  padding: 0.75rem;
+  resize: vertical;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.35rem;
+  color: var(--md-code-fg-color);
+  background: var(--md-code-bg-color);
+  font: 0.85rem/1.55 var(--md-code-font-family);
+  tab-size: 4;
+}
+
+.repofix-runner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.repofix-runner-actions button {
+  padding: 0.5rem 0.8rem;
+  border: 0;
+  border-radius: 0.3rem;
+  color: var(--md-primary-bg-color);
+  background: var(--md-primary-fg-color);
+  cursor: pointer;
+}
+
+.repofix-runner-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.repofix-python-runner pre {
+  min-height: 4rem;
+  max-height: 18rem;
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 40rem) {
+  .repofix-python-runner {
+    padding: 0.75rem;
+  }
+}

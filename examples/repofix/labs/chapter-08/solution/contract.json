@@ -1,0 +1,14 @@
+{
+  "_lab": "chapter-08",
+  "_status": "complete",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "sequence", "type", "data"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "type": {"enum": ["run.started", "run.failed"]},
+    "data": {"type": "object"}
+  }
+}

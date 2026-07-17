@@ -1,33 +1,99 @@
-# 项目完成标准与后续方向
+# 第 19 章 · 完成标准与后续方向
 
-RepoFix 第一版完成时应满足：
+“完成”必须由命令、测试和可追溯 Artifact 证明，而不是一张功能清单。
 
-- 输入公开 GitHub 仓库和 Issue 可以创建 Run。
-- Agent 在独立 Daytona 沙箱中运行。
-- Agent 能搜索、读取、修改代码并执行测试。
-- 测试未通过时不能声明成功。
-- Go 控制平面支持超时、取消和状态恢复。
-- Web 页面能展示实时轨迹、Diff、测试结果和成本。
-- 至少有 20 个可重复评测案例。
-- Prompt 或模型变化可以生成前后对比报告。
-- 所有服务可从 GitHub 自动测试和部署。
-- README 包含架构、快速开始、安全边界和演示。
-- 你能独立解释状态流、工具选择、失败恢复和测试策略。
+## 快速开始
 
-## 19. 暂不进入主线的内容
+[打开通用 Codespaces](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json){ .md-button .md-button--primary }
 
-在第一版完成前，不加入：
+| 用途 | 路径 |
+| --- | --- |
+| 只读 v1.0 验收记录模板 | `examples/repofix/labs/chapter-19/start/` |
+| 你的练习副本 | `examples/repofix/.work/chapter-19/` |
+| 填写示例 | `examples/repofix/labs/chapter-19/solution/` |
 
-- LangGraph 关键路径。
-- 多 Agent。
-- A2A。
-- 长期记忆。
-- 向量数据库。
-- Kubernetes。
-- IDE 插件。
-- 自动提交或自动合并 PR。
-- 通用 Agent 平台抽象。
+```bash
+cd examples/repofix
+make chapter-prepare CHAPTER=chapter-19
+make chapter-check CHAPTER=chapter-19
+```
 
-这些内容只有在评测证明当前架构确实遇到对应问题时再考虑。
+本章不提供一套“假装已上线”的代码。在 `.work/chapter-19/` 中把每项结论链接到真实命令、CI、Artifact 或演练记录；start 只读，solution 只示范证据格式。
 
----
+## 本地确定性验收
+
+在不配置 OpenAI 或 Daytona Key 的全新 Codespace 中：
+
+```bash
+cd examples/repofix
+make bootstrap
+make lint
+make test
+make contract-test
+make fake-e2e
+```
+
+全部通过后，证明领域模型、Agent Loop、状态机、契约、SSE Reducer 和 Fake 全栈闭环可复现。
+
+## 真实环境 Smoke
+
+Daytona Adapter 与 Live Eval 发布后，由维护者显式执行目标命令：
+
+```bash
+RUN_DAYTONA_SMOKE=1 make sandbox-smoke
+RUN_LIVE_EVAL=1 make eval-smoke
+```
+
+Smoke 必须生成：Run ID、源码 commit、模型和 Prompt 版本、Sandbox 清理结果、patch、独立测试报告、Token 和费用摘要。
+
+当前 Makefile 故意没有 `sandbox-smoke` 和 `eval-smoke`；在实现与受保护 CI 环境完成前，不增加空 target，也不要执行这两条命令。
+
+## 功能验收
+
+- 输入受支持的公开 GitHub 仓库和 Issue 能创建 Run。
+- Agent 只在独立 Daytona Sandbox 执行不可信代码。
+- 测试未通过或测试后再次修改代码时不能完成。
+- Go 支持取消、超时、幂等；重启后会保留事实，并将无法安全续跑的 Run 明确失败和清理。
+- SSE 重连不会丢失或重复应用事件。
+- Web 展示轨迹、Diff、测试、错误、成本和终态。
+- Eval 使用独立验证 Sandbox 和隐藏测试。
+- 发布流程具有 Smoke、回滚、限流和费用上限。
+
+## 可靠性演练
+
+在发布前主动执行：
+
+1. 模型请求超时。
+2. 测试进程超时。
+3. 用户在测试中取消。
+4. Python 服务崩溃。
+5. Go 服务在事件提交后崩溃。
+6. SSE 断线重连。
+7. Sandbox 删除失败。
+
+每个演练都应有预期状态、事件、清理行为和测试文件。
+
+## 作品集交付物
+
+- 在线书籍和架构决策记录。
+- 可复现的伴随代码 checkpoint。
+- 一段从 Issue 到 Patch 的演示。
+- 一份失败案例复盘，而不只有成功演示。
+- 一份 Prompt/模型变更前后的评测报告。
+- 安全边界、成本控制和运维说明。
+
+## 暂不进入主线
+
+在评测证明需要之前，不加入 LangGraph 关键路径、多 Agent、A2A、长期记忆、向量数据库、Kubernetes、IDE 插件和自动合并 PR。
+
+## 练习
+
+1. 从功能清单随机选择三项，为每项补一个机器证据和一个人工解释证据。
+2. 注入一次 Sandbox 删除失败，记录期望终态、事件顺序、告警和后续清理责任人。
+3. 把所有尚未实现的项移到明确的后续列表，证明 v1.0 结论没有依赖占位命令。
+
+## 最终自测问题
+
+你应能独立解释：为什么模型不能决定最终成功、为什么真实命令不能在 Codespaces 执行、谁拥有 Sandbox、如何防止旧测试结果、事件如何重放，以及评测如何防止修改测试作弊。
+
+最终验收由 chapter-check 和本页证据共同完成；参考 solution 只能示范记录格式，不能替代你自己的 CI、Smoke、Artifact 与演练链接。

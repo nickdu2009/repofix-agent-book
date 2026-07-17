@@ -1,77 +1,146 @@
-# Go 控制平面
+# 第 10 章 · Go 控制平面
 
-Python Agent 能独立完成最小闭环以后，再加入 Go。
+Go 控制平面拥有 Run 的生命周期：创建、排队、Sandbox、状态、取消、恢复和最终结果。它不解析 Prompt，也不实现模型决策。
 
-### 9.1 核心实体
+## 快速开始
 
-```text
-Task
-  用户目标和仓库信息
+| 入口 | 内容 |
+| --- | --- |
+| Codespaces | [打开 RepoFix 通用工作区](https://codespaces.new/nickdu2009/repofix-agent-book?quickstart=1&devcontainer_path=examples%2Frepofix%2F.devcontainer%2Fdevcontainer.json) |
+| 只读骨架 | `examples/repofix/labs/chapter-10/start/` |
+| 准备工作副本 | `make chapter-prepare CHAPTER=chapter-10` |
+| 工作副本 | `.work/chapter-10/` |
+| 结构检查 | `make chapter-check CHAPTER=chapter-10` |
+| 复盘参考 | `examples/repofix/labs/chapter-10/solution/` |
 
-Run
-  Task 的一次实际执行
+在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-10/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
 
-Step
-  一次模型响应或工具调用
+完成状态转移后运行 `go run .work/chapter-10/main.go`；程序必须接受合法转移并拒绝终态回到运行态。
 
-Artifact
-  Diff、测试报告、日志
+## 本章契约
 
-Evaluation
-  一个评测案例的运行结果
-```
+- **前置**：共享契约和 Python Agent HTTP 合约已完成；本章先实现 Fake Sandbox，下一章再替换为 Daytona Adapter。
+- **产物**：可编译的 Go 领域/编排核心及 Fake Agent 全栈闭环。
+- **验收**：不使用 OpenAI、Daytona 或 PostgreSQL，也能创建 Run、消费事件、取消并到达终态。
 
-### 9.2 Run 状态机
+!!! success "当前 Fake Checkpoint"
+    `services/control` 已实现 Run 状态机、并发安全内存 Repository、Fake Agent/Sandbox/Verifier、清理事件和零云端 E2E。HTTP Handler、PostgreSQL 和真实 Daytona 属于后续 Checkpoint。
 
-```text
-Pending
-  → Provisioning
-  → Running
-  → Testing
-  → Succeeded
+## 现代 Go 基线
 
-任意未完成状态
-  → Failed
-  → Cancelled
-  → TimedOut
-```
+本章统一使用 Go 1.26，并遵守以下约定：
 
-必须明确：
+- `context.Context` 从调用边界向下传递，用于取消和截止时间，不存入结构体；
+- 使用 `errors.Is`、`errors.As` 和带 `%w` 的错误包装保留错误链；
+- HTTP 与 Worker 日志使用标准库 `log/slog` 的结构化字段，不拼接不可检索的长字符串；
+- 优先使用标准库以及 `slices`、`maps` 等明确工具，泛型只用于消除真实重复，不为抽象而抽象；
+- 并发路径必须通过 `go test -race`，时间和取消逻辑优先用可控时钟或 `testing/synctest` 测试；
+- 所有启动的 goroutine 都必须有所有者、停止条件和等待点。
 
-- 哪些转移合法。
-- 谁能触发转移。
-- 转移是否需要事务。
-- 服务重启后如何恢复。
-- 重复请求如何保证幂等。
+“现代 Go”仍然强调小接口、显式错误和清晰所有权，不意味着把其他语言的框架风格搬进 Go。
 
-### 9.3 API
+## 目录结构
 
 ```text
-POST /tasks
-POST /tasks/{task_id}/runs
-GET  /runs/{run_id}
-GET  /runs/{run_id}/events
-POST /runs/{run_id}/cancel
-GET  /runs/{run_id}/artifacts
+services/control/
+├── doc.go
+├── fake_e2e_test.go
+├── internal/domain/
+│   ├── event.go
+│   └── run.go
+├── internal/orchestrator/
+├── internal/repository/
+├── internal/sandbox/
+├── internal/agentclient/
+└── internal/verifier/
 ```
 
-### 9.4 Go 与 Python 的边界
+## 状态机
 
-推荐职责：
+第一版状态：
 
 ```text
-Go：
-  何时开始和结束
-  Run 当前状态
-  沙箱生命周期
-  超时、重试、取消
-  事件与持久化
-
-Python：
-  下一步做什么
-  给模型什么上下文
-  调用哪个工具
-  如何根据工具结果继续
+pending → provisioning → running → succeeded
+   │             │           ├──→ failed
+   │             │           ├──→ cancelled
+   │             │           └──→ timed_out
+   └─────────────┴───────────────→ cancelled
 ```
 
-Go 不解析 Prompt，Python 不拥有最终 Run 状态。
+合法转换必须集中在领域层：
+
+```go
+var allowed = map[RunStatus]map[RunStatus]bool{
+	StatusPending:      {StatusProvisioning: true, StatusCancelled: true},
+	StatusProvisioning: {StatusRunning: true, StatusFailed: true, StatusCancelled: true, StatusTimedOut: true},
+	StatusRunning:      {StatusSucceeded: true, StatusFailed: true, StatusCancelled: true, StatusTimedOut: true},
+}
+
+func (r *Run) Transition(next RunStatus) error {
+	if !allowed[r.Status][next] {
+		return fmt.Errorf("invalid run transition: %s -> %s", r.Status, next)
+	}
+	r.Status = next
+	r.Version++
+	return nil
+}
+```
+
+状态更新使用 `WHERE id = ? AND version = ?`，避免恢复 Worker 和原 Worker 同时完成 Run。
+
+## HTTP API
+
+下面是完成 Go HTTP Adapter 后的目标 API；当前 Fake Checkpoint 没有监听端口：
+
+```text
+POST /v1/tasks
+POST /v1/tasks/{task_id}/runs
+GET  /v1/runs/{run_id}
+GET  /v1/runs/{run_id}/events
+POST /v1/runs/{run_id}/cancel
+GET  /v1/runs/{run_id}/artifacts
+POST /v1/tool-calls
+```
+
+创建 Run 接受 `Idempotency-Key`。重复请求返回同一个资源，不能重复创建 Sandbox。
+
+## Orchestrator 主路径
+
+```go
+func (o *Orchestrator) Execute(ctx context.Context, runID string) (err error) {
+	run := o.claimPending(runID)
+	box := o.createAndRecordSandbox(ctx, run)
+	candidate := o.agent.Run(ctx, run, box)
+	verified := o.verifier.Verify(ctx, box, candidate)
+	run = o.cleanupAndRecord(ctx, run, box) // sandbox.deleted 或 cleanup_failed
+	return o.finishFromVerifiedCandidate(ctx, run, verified)
+}
+```
+
+代码中的精确错误路径比伪代码更长。关键不变量是：Verifier 必须确认测试覆盖当前 revision；Sandbox 清理结果事件先写入；最后才写唯一终态。Python 的 `summary` 或 `ClaimedSuccess` 不是成功凭据。
+
+## 测试顺序
+
+1. 表驱动测试覆盖全部合法和非法状态转换。
+2. FakeAgent + FakeSandbox + FakeVerifier + 内存 Repository 跑闭环。
+3. `go test -race ./services/control/...` 检查并发安全。
+4. 增加 HTTP 后再用 `httptest` 覆盖 API Schema、幂等与错误响应。
+5. PostgreSQL 和 Daytona 作为后续 Adapter 合约测试。
+
+## 故障排查与验收
+
+| 现象 | 原因 | 处理 |
+| --- | --- | --- |
+| 同一 Run 创建两个 Sandbox | Claim 没有原子条件 | 使用 lease 与版本条件更新 |
+| 取消后变成 succeeded | 终态竞争未定义 | 在事务中规定取消/超时优先级 |
+| Go 服务退出时 Run 丢失 | Worker 只有内存状态 | 先落库，再执行外部动作 |
+
+验收命令：
+
+```bash
+go test ./services/control/...
+go test -race ./services/control/...
+make fake-e2e
+```
+
+Fake E2E 必须在没有云端密钥的 CI 中运行。
