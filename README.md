@@ -6,7 +6,7 @@
 
 仓库同时包含 `examples/repofix/` 伴随代码。19 章均提供小型 `start/` 骨架、独立学习工作区和 `solution/` 参考实现；教程中的核心代码与章节验收都进入 CI。
 
-当前哪些章节已有可运行代码、哪些仍是设计蓝图，请先看[伴随代码完成状态](docs/preface/implementation-status.md)。
+当前哪些章节已有可运行代码、哪些仍是设计蓝图，请先看[学习与实现路线图](docs/preface/implementation-status.md)。
 
 在线阅读：<https://nickdu2009.github.io/repofix-agent-book/>
 
