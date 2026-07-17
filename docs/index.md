@@ -25,11 +25,11 @@
     `docs/` 是你正在阅读的书，`examples/repofix/` 是可以运行和修改的伴随项目。除非章节另有说明，所有项目命令都从 `examples/repofix/` 执行。
 
 !!! warning "先看实现状态"
-    前半本的 Fake 闭环已有源码与 CI；Daytona、PostgreSQL、完整页面和 Railway 仍包含目标设计。开始章节前先查[伴随代码完成状态](preface/implementation-status.md)，不要执行尚未发布的目标命令。
+    前半本的 Fake 闭环已有源码与 CI；Daytona、PostgreSQL、完整页面和 Railway 仍包含目标设计。开始章节前先查[学习与实现路线图](preface/implementation-status.md)，区分“教材已准备”和“项目已实现”，不要执行尚未发布的目标命令。
 
 ## 最快开始
 
-1. 阅读[学习路线](preface/learning-path.md)和[怎样完成一章](preface/chapter-workflow.md)。
+1. 阅读[学习路线](preface/learning-path.md)、[学习与实现路线图](preface/implementation-status.md)和[怎样完成一章](preface/chapter-workflow.md)。
 2. 按[仓库与云端工作区](foundations/cloud-workspace.md)创建 Codespace，或先在[在线练习](playgrounds/index.md)运行语法小题。
 3. 在伴随项目中准备第一章骨架：
 
@@ -74,7 +74,7 @@ make chapter-prepare CHAPTER=chapter-04
 make chapter-check CHAPTER=chapter-04
 ```
 
-第一次结构检查会按教学设计失败。完成 TODO、把 Lab 状态标成 `complete`、运行该章的行为命令并通过检查后，再对照 `solution/`。未来稳定版本仍会使用 `chapter-04-start` 与 `chapter-04-solution` tag，但 tag 不是开始当前教程的前置条件。
+第一次结构检查会按教学设计失败。完成 TODO、补齐骨架要求的完成标记、运行该章的行为命令并通过检查后，再对照 `solution/`。未来稳定版本仍会使用 `chapter-04-start` 与 `chapter-04-solution` tag，但 tag 不是开始当前教程的前置条件。
 
 ## 贯穿全书的安全闸门
 
