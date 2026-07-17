@@ -1,0 +1,63 @@
+name: Publish book release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - VERSION
+      - ".github/releases/**"
+      - ".github/workflows/release.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: book-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate release metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '[:space:]' < VERSION)"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "VERSION must use semantic version format: x.y.z" >&2
+            exit 1
+          fi
+
+          tag="v${version}"
+          notes=".github/releases/${tag}.md"
+          test -s "$notes"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "notes=$notes" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.metadata.outputs.tag }}
+          VERSION: ${{ steps.metadata.outputs.version }}
+          NOTES: ${{ steps.metadata.outputs.notes }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title="RepoFix AI Agent 实践教程 v${VERSION}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$title" --notes-file "$NOTES" --latest
+          else
+            gh release create "$TAG" \
+              --target "$GITHUB_SHA" \
+              --title "$title" \
+              --notes-file "$NOTES" \
+              --latest
+          fi
