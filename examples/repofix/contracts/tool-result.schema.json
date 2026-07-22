@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repofix.dev/schemas/tool-result.schema.json",
+  "title": "ToolCallResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ok", "output", "error", "metadata", "workspace_revision"],
+  "properties": {
+    "ok": {"type": "boolean"},
+    "output": {"type": "string"},
+    "error": {"type": ["string", "null"]},
+    "metadata": {"type": "object"},
+    "workspace_revision": {"type": "integer", "minimum": 0}
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "ok": {"const": true},
+        "error": {"type": "null"}
+      }
+    },
+    {
+      "properties": {
+        "ok": {"const": false},
+        "error": {"type": "string", "minLength": 1}
+      }
+    }
+  ]
+}

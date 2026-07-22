@@ -1,0 +1,5 @@
+{
+  "tool": "run_tests",
+  "arguments": {"target": "unit"},
+  "timeout_ms": 2000
+}

@@ -16,7 +16,7 @@ Daytona 是 RepoFix 执行不可信仓库代码的边界。接入本章之前，
 在 Codespaces 终端进入 `examples/repofix`，先运行 `chapter-prepare`，再只在 `.work/chapter-11/` 完成 TODO，最后运行 `chapter-check`。`start/` 始终只读；只有通过验收并记录自己的取舍后才用 `solution/` 复盘，不要从参考实现开始复制。
 
 !!! warning "设计蓝图：尚无完整实现"
-    当前仓库没有 Daytona SDK Adapter、`sandbox-smoke` target 或云端测试；本章参考实现不是可部署的 Sandbox 集成。
+    Python Tool Gateway HTTP Client 与 Go Handler 已实现，但当前仓库仍没有 Daytona SDK Adapter、`sandbox-smoke` target 或云端测试；本章参考实现不是可部署的 Sandbox 集成。
 
 ## 本章契约
 
@@ -81,6 +81,8 @@ git.diff       → git diff --no-ext-diff
 ```
 
 禁止模型传入环境变量、工作目录、重定向或复合 shell 表达式。
+
+当前伴随实现已经用 `contracts/tool-call.schema.json` 和 `contracts/tool-result.schema.json` 固定 Wire DTO，并提供两端离线 HTTP 测试。Daytona Adapter 只需实现 Handler 后面的受控执行函数，不应修改 Python Agent Core 或开放新的通用命令入口。
 
 ## 创建策略
 

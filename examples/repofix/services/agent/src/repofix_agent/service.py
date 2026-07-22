@@ -10,7 +10,13 @@ from typing import Protocol
 from .api_models import AgentRunRequest, AgentRunResponse, CancelAgentRunResponse
 from .config import ServiceConfig
 from .domain import AgentStatus, CancellationToken, RunBudget
-from .errors import AgentError, BudgetExceeded, RunCancelled, UnsafeExecutionError
+from .errors import (
+    AgentError,
+    BudgetExceeded,
+    RunCancelled,
+    ToolGatewayError,
+    UnsafeExecutionError,
+)
 from .runner import AgentRunner
 
 
@@ -109,6 +115,7 @@ class AgentService:
             self._active[request.run_id] = cancellation
 
         try:
+
             def run_in_worker():
                 runner = self._runner_factory.create_runner(
                     request=request,
@@ -137,6 +144,17 @@ class AgentService:
                 500,
                 "unsafe_execution",
                 "agent safety invariant rejected the runner configuration",
+            ) from error
+        except ToolGatewayError as error:
+            details = (
+                {"upstream_code": error.upstream_code} if error.upstream_code is not None else None
+            )
+            raise AgentServiceError(
+                503 if error.retryable else 502,
+                "tool_gateway_failed",
+                "tool gateway request failed",
+                retryable=error.retryable,
+                details=details,
             ) from error
         except AgentError as error:
             raise AgentServiceError(422, "agent_failed", str(error)) from error

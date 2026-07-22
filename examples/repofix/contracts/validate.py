@@ -182,6 +182,46 @@ def main() -> None:
         }
     )
 
+    tool_call = validator("tool-call.schema.json")
+    tool_call.validate(
+        {
+            "tool": "write_file",
+            "arguments": {"path": "calculator.py", "content": "fixed"},
+            "timeout_ms": 1000,
+        }
+    )
+    expect_invalid(
+        tool_call,
+        {
+            "tool": "run_tests",
+            "arguments": {"target": "unit", "command": "pytest"},
+            "timeout_ms": 1000,
+        },
+        "tool call with caller-supplied command",
+    )
+    expect_invalid(
+        tool_call,
+        {
+            "tool": "run_tests",
+            "arguments": {"target": "../../bin/sh"},
+            "timeout_ms": 1000,
+        },
+        "unknown semantic test target",
+    )
+
+    tool_result = validator("tool-result.schema.json")
+    tool_result.validate(
+        {
+            "ok": True,
+            "output": "1 passed",
+            "error": None,
+            "metadata": {"exit_code": 0, "tested_revision": 1},
+            "workspace_revision": 1,
+        }
+    )
+    tool_call.validate(load("fixtures/tool-call.request.json"))
+    tool_result.validate(load("fixtures/tool-result.response.json"))
+
     print(f"validated {len(SCHEMA_FILES)} contract schemas and positive/negative examples")
 
 

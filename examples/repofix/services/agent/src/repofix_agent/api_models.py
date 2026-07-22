@@ -18,6 +18,7 @@ class BoundaryModel(BaseModel):
 class AgentRunRequest(BoundaryModel):
     run_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]*$")
     task: str = Field(min_length=1, max_length=20_000)
+    initial_workspace_revision: int = Field(ge=0)
     workspace_capability: SecretStr = Field(min_length=1)
     tool_gateway_url: HttpUrl
     max_steps: int = Field(default=20, ge=1, le=100)
