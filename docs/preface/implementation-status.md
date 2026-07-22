@@ -130,9 +130,9 @@
 | 工作区与缺陷 Fixture | 可运行 | `make bootstrap`、`make fixture-baseline` | 更多语言 Fixture |
 | 章节学习骨架 | 可运行 | 19 个 `start/`、`solution/` 与 `make chapter-check` | 随实现成熟持续扩充行为测试 |
 | Python Agent Core | 可运行 | 核心与 Adapter 离线测试、Ruff、零网络 Demo | 可恢复工具错误、费用预算 |
-| Python HTTP 服务 | 可运行 | Fake Runner API 测试、取消、顶层错误契约 | Live Tool Gateway Client、错误分类、Step 事件上报 |
-| 共享 Run/Event 契约 | 可运行 | Draft 2020-12 Schema 及正反例 | 完整 Task/Agent/Tool HTTP Schema |
-| Go 控制平面 | 可运行的 Fake 闭环 | 状态机、内存仓库、Fake Sandbox/Agent/Verifier 测试 | HTTP、PostgreSQL、真实进程恢复 |
+| Python HTTP 服务 | 可运行 | Fake Runner API、取消、顶层错误契约、Tool Gateway HTTP Client | Live Model 组合根、模型错误分类、Step 事件上报 |
+| 共享 Run/Event 契约 | 可运行 | Run、Event、Error、Artifact、Tool Call/Result Schema 及正反例 | Task/Agent HTTP Schema |
+| Go 控制平面 | 可运行的 Fake 闭环 | 状态机、内存仓库、Fake Sandbox/Agent/Verifier、Tool Gateway Handler 测试 | 完整公网 HTTP、PostgreSQL、真实进程恢复 |
 | Daytona Adapter | 设计蓝图 | 生命周期、安全策略和 Smoke 设计 | 锁定 SDK 的真实 Adapter 与手动 Smoke |
 | PostgreSQL 与 SSE | 设计蓝图 | DDL、事件顺序和重放协议 | migration、Repository 与重连集成测试 |
 | Eval Runner | 原型 | 单案例、独立 Oracle 与防作弊测试 | 3～5 个 Daytona 案例、JSONL 聚合报告 |

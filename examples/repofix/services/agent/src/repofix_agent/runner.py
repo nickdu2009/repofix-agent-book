@@ -26,6 +26,7 @@ from .errors import (
     CompletionRejected,
     ModelProtocolError,
     RunCancelled,
+    ToolGatewayError,
     UnsafeExecutionError,
 )
 from .protocols import ModelClient, ToolExecutor
@@ -185,6 +186,8 @@ class AgentRunner:
                 arguments,
                 timeout_seconds=timeout_seconds,
             )
+        except ToolGatewayError:
+            raise
         except Exception as error:
             return ToolResult(ok=False, output="", error=f"executor raised: {error}")
         if not isinstance(result, ToolResult):

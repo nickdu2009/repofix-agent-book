@@ -18,7 +18,7 @@ Python、Go 和 TypeScript 不应分别手写三套 **Wire RunStatus 与 RunEven
 ## 本章契约
 
 - **前置**：阅读运行时架构决策。
-- **产物**：Run、Event、Error 和 Artifact Schema。
+- **产物**：Run、Event、Error、Artifact、Tool Call 和 Tool Result Schema。
 - **验收**：三种语言使用相同 JSON 字面量，非法事件在进入领域层前被拒绝。
 
 ## Run 状态
@@ -84,7 +84,12 @@ make contract-test
 - `sequence` 是大于等于 1 的整数。
 - 未知字段默认被拒绝。
 - `schema_version` 不受支持时返回稳定错误。
+- Tool Gateway 拒绝未知工具、额外参数和调用方提交的命令字符串。
 - TypeScript 在 `unknown` 数据通过 Schema 后才更新页面状态。
+
+## Tool Gateway 契约
+
+Python 到 Go 的工具请求使用 `tool-call.schema.json`，Go 返回 `tool-result.schema.json`。请求只包含语义工具、结构化参数和毫秒级超时；短期 capability 放在 HTTP `Authorization` Header 中，不写进 JSON、日志或事件。Go 启动 Agent 时另行传入初始 revision，每次工具响应再携带当前 `workspace_revision`，使 Python 的完成判定绑定到实际被测试的修订。两端测试共同消费 `contracts/fixtures/` 下的规范样例。
 
 ## Artifact 边界
 

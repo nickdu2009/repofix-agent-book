@@ -23,3 +23,18 @@ class RunCancelled(AgentError):
 
 class UnsafeExecutionError(AgentError):
     """A live model was paired with a non-sandboxed executor."""
+
+
+class ToolGatewayError(AgentError):
+    """The Go Tool Gateway was unavailable or violated its wire contract."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        retryable: bool,
+        upstream_code: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.retryable = retryable
+        self.upstream_code = upstream_code

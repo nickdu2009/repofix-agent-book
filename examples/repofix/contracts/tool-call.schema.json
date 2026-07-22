@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repofix.dev/schemas/tool-call.schema.json",
+  "title": "ToolCallRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["tool", "arguments", "timeout_ms"],
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["list_files", "read_file", "search_code", "write_file", "run_tests"]
+    },
+    "arguments": {"type": "object"},
+    "timeout_ms": {"type": "integer", "minimum": 1, "maximum": 300000}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"tool": {"const": "list_files"}}},
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path"],
+            "properties": {"path": {"type": "string", "minLength": 1}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"tool": {"const": "read_file"}}},
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path"],
+            "properties": {"path": {"type": "string", "minLength": 1}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"tool": {"const": "search_code"}}},
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["query", "path"],
+            "properties": {
+              "query": {"type": "string", "minLength": 1},
+              "path": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"tool": {"const": "write_file"}}},
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "content"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "content": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"tool": {"const": "run_tests"}}},
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["target"],
+            "properties": {"target": {"const": "unit"}}
+          }
+        }
+      }
+    }
+  ]
+}

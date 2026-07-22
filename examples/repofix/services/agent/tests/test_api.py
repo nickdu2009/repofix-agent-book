@@ -16,6 +16,7 @@ from repofix_agent import (
     ModelResponse,
     RunBudget,
     ToolCall,
+    ToolGatewayError,
 )
 from repofix_agent.api import create_app
 from repofix_agent.api_models import AgentRunRequest
@@ -45,6 +46,7 @@ def request_body(run_id: str = "run_01JTEST") -> dict[str, object]:
     return {
         "run_id": run_id,
         "task": "Fix calculator division and run tests",
+        "initial_workspace_revision": 0,
         "workspace_capability": "cap_short_lived",
         "tool_gateway_url": "http://control.internal/v1/tool-calls",
         "max_steps": 3,
@@ -184,6 +186,55 @@ def test_validation_error_uses_top_level_error_contract() -> None:
     assert body["request_id"] == "req-contract-test"
     assert body["retryable"] is False
     assert "detail" not in body
+
+
+def test_tool_gateway_failure_uses_stable_service_error() -> None:
+    class FailingGatewayExecutor:
+        is_sandboxed = True
+        workspace_revision = 0
+
+        def execute(
+            self,
+            name: str,
+            arguments: dict[str, Any],
+            *,
+            timeout_seconds: float,
+        ):
+            del name, arguments, timeout_seconds
+            raise ToolGatewayError(
+                "gateway unavailable",
+                retryable=True,
+                upstream_code="tool_execution_failed",
+            )
+
+    def failing_runner(
+        _request: AgentRunRequest,
+        budget: RunBudget,
+        cancellation: CancellationToken,
+    ) -> AgentRunner:
+        model = FakeModelClient(
+            [ModelResponse(output=(ToolCall("call-1", "read_file", '{"path":"a.py"}'),))]
+        )
+        return AgentRunner(
+            model,
+            FailingGatewayExecutor(),
+            budget=budget,
+            cancellation=cancellation,
+        )
+
+    app = create_app(runner_factory=ReadyFactory(failing_runner))
+    response = asyncio.run(
+        api_request(app, "POST", "/v1/agent-runs", json=request_body("run_gateway_failure"))
+    )
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "code": "tool_gateway_failed",
+        "message": "tool gateway request failed",
+        "request_id": response.headers["x-request-id"],
+        "retryable": True,
+        "details": {"upstream_code": "tool_execution_failed"},
+    }
 
 
 class BlockingFakeModelClient:

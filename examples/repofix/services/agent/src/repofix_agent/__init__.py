@@ -12,8 +12,10 @@ from .domain import (
     ToolCall,
     ToolResult,
 )
+from .errors import ToolGatewayError
 from .fake import FakeModelClient, FakeToolExecutor
 from .runner import AgentRunner
+from .tool_gateway import ToolGatewayClient
 
 __all__ = [
     "AgentRunResult",
@@ -28,5 +30,7 @@ __all__ = [
     "RunBudget",
     "StepRecord",
     "ToolCall",
+    "ToolGatewayClient",
+    "ToolGatewayError",
     "ToolResult",
 ]

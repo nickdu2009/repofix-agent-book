@@ -211,7 +211,7 @@ git status --short
 
 - [ ] Bootstrap 显示固定版本检查通过。
 - [ ] `make test` 全部通过且没有外部模型请求。
-- [ ] `make contract-test` 输出 `validated 4 contract schemas and positive/negative examples`。
+- [ ] `make contract-test` 输出 `validated 6 contract schemas and positive/negative examples`。
 - [ ] `git status --short` 不显示 `.venv`、缓存或密钥。
 - [ ] 可以指出书籍目录和伴随项目目录。
 - [ ] 已创建第一篇学习日志或 Bootstrap Issue。
